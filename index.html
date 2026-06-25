@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ismail | Portfolio</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/hero_illustration.png">
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Personal portfolio of Ismail, a software developer and designer specializing in building clean, modern, and highly aesthetic web experiences.">
+    <meta name="keywords" content="Ismail, Software Developer, Web Designer, Portfolio, React, JavaScript, CSS, HTML5">
+    <meta name="author" content="Ismail">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Decorative blurred glowing backdrop spots (Aurora effect) -->
+    <div class="glow-bg glow-primary"></div>
+    <div class="glow-bg glow-secondary"></div>
+
+    <!-- Fixed Header -->
+    <header class="main-header" id="header">
+        <div class="header-container">
+            <a href="#" class="logo" id="logo-link">
+                <span class="logo-text">Ismail</span>
+                <span class="logo-dot"></span>
+            </a>
+            <nav class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section" id="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="badge">Available for opportunities</div>
+                    <h1 class="hero-title">
+                        Hi, I'm <span class="gradient-text">Ismail</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Building clean, modern, and highly aesthetic web experiences. I bridge the gap between engineering and design.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#projects" class="btn btn-primary" id="view-work-btn">
+                            <span>View My Work</span>
+                            <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                        <a href="#contact" class="btn btn-secondary" id="contact-btn">Get in Touch</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-image-wrapper">
+                        <img src="assets/hero_illustration.png" alt="Futuristic Developer Workspace Illustration" class="hero-image" id="hero-img">
+                        <div class="image-glow"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <span class="scroll-dot"></span>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about-section" id="about">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-tagline">About Me</span>
+                    <h2 class="section-title">Crafting digital solutions</h2>
+                </div>
+                <div class="about-grid">
+                    <div class="about-bio">
+                        <p class="bio-text">
+                            I am a software developer and designer passionate about crafting high-performance, beautiful, and user-centered web applications. With a sharp eye for detail and design aesthetics, I strive to make every interaction seamless, engaging, and memorable.
+                        </p>
+                        <p class="bio-text">
+                            My approach combines robust frontend engineering with intuitive interface design, ensuring that the applications I build are not only visually stunning but also fast, responsive, and accessible.
+                        </p>
+                    </div>
+                    <div class="about-skills">
+                        <h3 class="skills-title">Core Skills</h3>
+                        <div class="skills-grid">
+                            <div class="skill-card">
+                                <div class="skill-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24a1.79 1.79 0 0 0-2.5 1.54v12.44a1.79 1.79 0 0 0 2.5 1.54l8.95-5.17a1.79 1.79 0 0 0 0-3.07Z"/></svg>
+                                </div>
+                                <span class="skill-name">Frontend Dev</span>
+                            </div>
+                            <div class="skill-card">
+                                <div class="skill-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                </div>
+                                <span class="skill-name">UI/UX Design</span>
+                            </div>
+                            <div class="skill-card">
+                                <div class="skill-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                </div>
+                                <span class="skill-name">JavaScript/ES6+</span>
+                            </div>
+                            <div class="skill-card">
+                                <div class="skill-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg>
+                                </div>
+                                <span class="skill-name">Backend & APIs</span>
+                            </div>
+                            <div class="skill-card">
+                                <div class="skill-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                </div>
+                                <span class="skill-name">SEO & Speed</span>
+                            </div>
+                            <div class="skill-card">
+                                <div class="skill-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                </div>
+                                <span class="skill-name">Git & Workflows</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="projects-section" id="projects">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-tagline">My Projects</span>
+                    <h2 class="section-title">Featured Work</h2>
+                </div>
+                <div class="projects-grid">
+                    <!-- Project Card 1 -->
+                    <article class="project-card">
+                        <div class="project-card-header">
+                            <span class="project-num">01</span>
+                            <div class="project-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+                            </div>
+                        </div>
+                        <h3 class="project-card-title">Aether Dashboard</h3>
+                        <p class="project-card-desc">
+                            A sleek, dark-themed analytics dashboard with real-time charts, detailed user metrics, and interactive data visualization elements.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Next.js</span>
+                            <span class="tag">Chart.js</span>
+                            <span class="tag">CSS variables</span>
+                        </div>
+                        <a href="#" class="project-link" aria-label="View Aether Dashboard project">
+                            <span>View Project</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </a>
+                    </article>
+
+                    <!-- Project Card 2 -->
+                    <article class="project-card">
+                        <div class="project-card-header">
+                            <span class="project-num">02</span>
+                            <div class="project-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                            </div>
+                        </div>
+                        <h3 class="project-card-title">Nova E-Commerce</h3>
+                        <p class="project-card-desc">
+                            A clean, fast, and responsive digital storefront focusing on smooth animations, dynamic product filtering, and visual excellence.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">HTML5</span>
+                            <span class="tag">CSS Grid</span>
+                            <span class="tag">Intersection Observer</span>
+                        </div>
+                        <a href="#" class="project-link" aria-label="View Nova E-Commerce project">
+                            <span>View Project</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </a>
+                    </article>
+
+                    <!-- Project Card 3 -->
+                    <article class="project-card">
+                        <div class="project-card-header">
+                            <span class="project-num">03</span>
+                            <div class="project-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            </div>
+                        </div>
+                        <h3 class="project-card-title">Zenith Task Manager</h3>
+                        <p class="project-card-desc">
+                            A minimalist productivity app designed for distraction-free organization, featuring custom workspaces, drag-and-drop elements, and local storage.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">CSS Variables</span>
+                            <span class="tag">LocalStorage</span>
+                            <span class="tag">Web Animations</span>
+                        </div>
+                        <a href="#" class="project-link" aria-label="View Zenith Task Manager project">
+                            <span>View Project</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section" id="contact">
+            <div class="section-container">
+                <div class="contact-card">
+                    <div class="contact-glow"></div>
+                    <span class="contact-tag">Get in Touch</span>
+                    <h2 class="contact-title">Let's build something extraordinary</h2>
+                    <p class="contact-desc">
+                        I am always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Drop me an email or connect with me on social media.
+                    </p>
+                    <div class="contact-details">
+                        <a href="mailto:ismail@example.com" class="contact-email-btn" id="email-link">
+                            <span>ismail@example.com</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                        </a>
+                    </div>
+                    <div class="contact-socials">
+                        <a href="https://github.com" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                        </a>
+                        <a href="https://linkedin.com" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p class="copyright">&copy; 2026 Ismail. Crafted with design details.</p>
+            <div class="footer-links">
+                <a href="#about" class="footer-link">About</a>
+                <a href="#projects" class="footer-link">Projects</a>
+                <a href="#contact" class="footer-link">Contact</a>
+                <a href="#" class="footer-link scroll-top">Back to Top</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Navigation Logic (Mobile Menu Toggle & Header Blur on Scroll) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const header = document.getElementById('header');
+            
+            // Toggle Mobile Menu
+            navToggle.addEventListener('click', () => {
+                navToggle.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            // Close Mobile Menu on Nav Link Click
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navToggle.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            // Header blur background on scroll
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
