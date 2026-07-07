@@ -556,6 +556,126 @@ img {
 }
 
 /* ==========================================================================
+   Experience & Education Section
+   ========================================================================== */
+.experience-section {
+    position: relative;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+}
+
+.experience-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+}
+
+.timeline-col-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+}
+
+.col-icon {
+    color: var(--accent-cyan);
+}
+
+.timeline {
+    position: relative;
+    padding-left: 24px;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.timeline-item {
+    position: relative;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -29.5px; /* -24px padding-left - 5.5px half-width of marker */
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--accent-cyan);
+    transition: var(--transition-normal);
+}
+
+.timeline-item:hover .timeline-marker {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    transform: scale(1.2);
+}
+
+.timeline-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-date {
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-cyan);
+    margin-bottom: 8px;
+}
+
+.timeline-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.timeline-subtitle {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.timeline-desc {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.timeline-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+}
+
+.timeline-bullets li {
+    position: relative;
+    padding-left: 16px;
+}
+
+.timeline-bullets li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* ==========================================================================
    Projects Section
    ========================================================================== */
 .projects-section {
@@ -857,6 +977,10 @@ img {
         gap: 40px;
     }
     
+    .experience-grid {
+        gap: 40px;
+    }
+    
     .projects-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -925,7 +1049,7 @@ img {
     .nav-toggle.active .bar:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
     }
-
+ 
     /* Hero Section */
     .hero-container {
         grid-template-columns: 1fr;
@@ -959,9 +1083,15 @@ img {
     .hero-image-wrapper {
         max-width: 320px;
     }
-
+ 
     /* About Section */
     .about-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+    
+    /* Experience Section */
+    .experience-grid {
         grid-template-columns: 1fr;
         gap: 48px;
     }
