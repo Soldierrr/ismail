@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse the archive — Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">Ledger<span>.</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="browse.html" class="active">Browse</a></li>
+      <li><a href="upload.html">Sell your data</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Log in</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <section style="padding-bottom: 0;">
+    <div class="wrap">
+      <p class="eyebrow">The archive</p>
+      <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem);">Browse research datasets</h1>
+      <p class="lede">Every dataset includes a description, a sample file and a suggested citation, so you know exactly what you're buying.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap browse-layout">
+      <aside>
+        <input type="text" id="dataset-search" class="search-box" placeholder="Search by title or keyword">
+
+        <div class="filter-group">
+          <h4>Field</h4>
+          <label class="filter-option"><input type="checkbox" value="taxation"> Taxation</label>
+          <label class="filter-option"><input type="checkbox" value="auditing"> Auditing</label>
+          <label class="filter-option"><input type="checkbox" value="finance"> Corporate finance</label>
+          <label class="filter-option"><input type="checkbox" value="governance"> Governance</label>
+          <label class="filter-option"><input type="checkbox" value="economics"> Economics</label>
+        </div>
+
+        <div class="filter-group">
+          <h4>Price</h4>
+          <label class="filter-option"><input type="radio" name="price" checked> Any price</label>
+          <label class="filter-option"><input type="radio" name="price"> Under $50</label>
+          <label class="filter-option"><input type="radio" name="price"> $50–$100</label>
+          <label class="filter-option"><input type="radio" name="price"> Over $100</label>
+        </div>
+      </aside>
+
+      <div>
+        <div class="data-list" id="dataset-list">
+
+          <a href="dataset.html" class="data-item" data-category="taxation" data-search="SME Tax Compliance Panel firm level filing Nigeria">
+            <div>
+              <h3 class="data-title">SME Tax Compliance Panel, 2015–2024</h3>
+              <p class="data-desc">Firm-level compliance and filing behaviour across 4,200 small and medium enterprises.</p>
+              <div class="data-tags"><span class="tag">Taxation</span><span class="tag">Panel data</span></div>
+            </div>
+            <div class="data-stats">312 downloads</div>
+            <div class="data-price">$85</div>
+          </a>
+
+          <a href="dataset.html" class="data-item" data-category="auditing" data-search="Audit Fee Determinants listed companies markets">
+            <div>
+              <h3 class="data-title">Audit Fee Determinants Dataset</h3>
+              <p class="data-desc">Ten years of audit fee, tenure and firm-size data across listed companies in 12 markets.</p>
+              <div class="data-tags"><span class="tag">Auditing</span><span class="tag">Cross-country</span></div>
+            </div>
+            <div class="data-stats">198 downloads</div>
+            <div class="data-price">$120</div>
+          </a>
+
+          <a href="dataset.html" class="data-item" data-category="governance" data-search="Corporate Governance Index emerging markets board disclosure">
+            <div>
+              <h3 class="data-title">Corporate Governance Index Data</h3>
+              <p class="data-desc">Governance scoring for 600 emerging-market firms, built from board and disclosure records.</p>
+              <div class="data-tags"><span class="tag">Governance</span><span class="tag">Emerging markets</span></div>
+            </div>
+            <div class="data-stats">147 downloads</div>
+            <div class="data-price">$95</div>
+          </a>
+
+          <a href="dataset.html" class="data-item" data-category="finance" data-search="Working Capital Survey SME liquidity responses">
+            <div>
+              <h3 class="data-title">SME Working Capital Survey</h3>
+              <p class="data-desc">Survey responses on liquidity management practices from 1,050 small business owners.</p>
+              <div class="data-tags"><span class="tag">Corporate finance</span><span class="tag">Survey data</span></div>
+            </div>
+            <div class="data-stats">89 downloads</div>
+            <div class="data-price">$60</div>
+          </a>
+
+          <a href="dataset.html" class="data-item" data-category="economics" data-search="Informal Sector Revenue Estimates municipal">
+            <div>
+              <h3 class="data-title">Informal Sector Revenue Estimates</h3>
+              <p class="data-desc">Municipal-level revenue estimates for informal trading activity across 40 districts.</p>
+              <div class="data-tags"><span class="tag">Economics</span><span class="tag">Regional data</span></div>
+            </div>
+            <div class="data-stats">64 downloads</div>
+            <div class="data-price">$45</div>
+          </a>
+
+          <a href="dataset.html" class="data-item" data-category="finance" data-search="Dividend Policy Panel listed firms payout">
+            <div>
+              <h3 class="data-title">Dividend Policy Panel, 2012–2023</h3>
+              <p class="data-desc">Payout ratios and dividend announcements for 300 listed firms over eleven years.</p>
+              <div class="data-tags"><span class="tag">Corporate finance</span><span class="tag">Panel data</span></div>
+            </div>
+            <div class="data-stats">211 downloads</div>
+            <div class="data-price">$110</div>
+          </a>
+
+        </div>
+
+        <p id="empty-state" style="display:none; color: var(--ink-soft); padding: 24px 0;">No datasets match your search. Try a different keyword or clear a filter.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <a href="index.html" class="brand" style="font-size:1.2rem;">Ledger<span>.</span></a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="browse.html">Browse datasets</a>
+          <a href="upload.html">Sell your data</a>
+        </div>
+        <div class="footer-col">
+          <h5>About</h5>
+          <a href="about.html">The researcher</a>
+          <a href="contact.html">Contact &amp; FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Ledger. Research data, sold directly by the people who collected it.</div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

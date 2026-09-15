@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact &amp; FAQ — Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">Ledger<span>.</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="browse.html">Browse</a></li>
+      <li><a href="upload.html">Sell your data</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="login.html">Log in</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <section style="padding-bottom: 0;">
+    <div class="wrap">
+      <p class="eyebrow">Get in touch</p>
+      <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem);">Contact &amp; frequently asked questions</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap detail-grid">
+      <div>
+        <h2>Frequently asked questions</h2>
+
+        <div class="faq-item open">
+          <button class="faq-q">What format are the datasets in?<span class="faq-icon">+</span></button>
+          <div class="faq-a"><p>Most datasets are provided as CSV files, with many also including a Stata .dta version and a full codebook explaining each variable.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">Can I preview a dataset before buying?<span class="faq-icon">+</span></button>
+          <div class="faq-a"><p>Yes. Every listing includes a small sample file so you can check the structure and variables before you pay.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">Is it safe to pay on Ledger?<span class="faq-icon">+</span></button>
+          <div class="faq-a"><p>Payments will run through a secure, PCI-compliant payment gateway. That connection is being finalised, so purchases are shown as a preview for now.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">Can I license my own dataset for sale?<span class="faq-icon">+</span></button>
+          <div class="faq-a"><p>Yes — reach out using the form and we'll set up your seller account. Every submission is reviewed before it goes live.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">How is my purchased data licensed?<span class="faq-icon">+</span></button>
+          <div class="faq-a"><p>Datasets are licensed for individual academic and research use. Redistribution or commercial resale is not permitted unless stated otherwise on the listing.</p></div>
+        </div>
+      </div>
+
+      <div class="form-panel" style="max-width: none;">
+        <h3>Send a message</h3>
+        <form id="contact-form" novalidate>
+          <div class="field">
+            <label for="contact-name">Name</label>
+            <input type="text" id="contact-name" required>
+          </div>
+          <div class="field">
+            <label for="contact-email">Email address</label>
+            <input type="email" id="contact-email" required>
+          </div>
+          <div class="field">
+            <label for="contact-message">Message</label>
+            <textarea id="contact-message" required placeholder="What can we help with?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Send message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <a href="index.html" class="brand" style="font-size:1.2rem;">Ledger<span>.</span></a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="browse.html">Browse datasets</a>
+          <a href="upload.html">Sell your data</a>
+        </div>
+        <div class="footer-col">
+          <h5>About</h5>
+          <a href="about.html">The researcher</a>
+          <a href="contact.html">Contact &amp; FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Ledger. Research data, sold directly by the people who collected it.</div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
