@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — Ledger Admin</title>
+<meta name="description" content="Edit your admin profile and manage site content for the About and Contact pages.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem; color:var(--paper);">Ledger<span>.</span></a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Ledger<span>.</span></a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <a href="admin-dashboard.html" class="admin-nav-link">📊 Dashboard</a>
+      <a href="admin-users.html"     class="admin-nav-link">👥 Users</a>
+      <a href="admin-papers.html"    class="admin-nav-link">📄 Papers</a>
+      <a href="admin-upload.html"    class="admin-nav-link">⬆ Upload</a>
+      <a href="admin-payments.html"  class="admin-nav-link">💳 Payments</a>
+      <a href="admin-tickets.html"   class="admin-nav-link">🎫 Support Tickets</a>
+      <a href="admin-profile.html"   class="admin-nav-link">👤 My Profile</a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">⏻ Log out</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-header">
+      <p class="eyebrow" style="margin-bottom:4px;">Account</p>
+      <h1>My Profile</h1>
+    </div>
+    <div class="admin-body" style="display:flex; flex-direction:column; gap:32px; max-width:720px;">
+
+      <!-- Personal info -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.1rem; margin-bottom:4px;">Personal Information</h2>
+        <p style="font-size:0.88rem; color:var(--ink-soft); margin-bottom:20px;">Update your name. Email changes take effect on next login.</p>
+        <form id="admin-profile-form" novalidate>
+          <div class="form-row-two">
+            <div class="field">
+              <label for="ap-firstname">First name</label>
+              <input type="text" id="ap-firstname" placeholder="First name">
+            </div>
+            <div class="field">
+              <label for="ap-lastname">Last name</label>
+              <input type="text" id="ap-lastname" placeholder="Last name">
+            </div>
+          </div>
+          <div class="field">
+            <label for="ap-email">Email address</label>
+            <input type="email" id="ap-email" placeholder="admin@ledger.ng" readonly style="opacity:0.65; cursor:not-allowed;">
+            <div class="hint">Email cannot be changed in this version.</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save profile</button>
+        </form>
+      </div>
+
+      <!-- About page editor -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.1rem; margin-bottom:4px;">Edit — About Page</h2>
+        <p style="font-size:0.88rem; color:var(--ink-soft); margin-bottom:20px;">Changes are saved to storage and appear on the public About page immediately.</p>
+        <form id="admin-about-form" novalidate>
+          <div class="form-row-two">
+            <div class="field">
+              <label for="sc-researcher-name">Researcher name</label>
+              <input type="text" id="sc-researcher-name" placeholder="e.g. Dr. A. Kenton">
+            </div>
+            <div class="field">
+              <label for="sc-initials">Initials (for avatar)</label>
+              <input type="text" id="sc-initials" placeholder="e.g. AK" maxlength="3">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sc-department">Department / Affiliation</label>
+            <input type="text" id="sc-department" placeholder="e.g. Department of Accounting">
+          </div>
+          <div class="field">
+            <label for="sc-bio1">Bio paragraph 1</label>
+            <textarea id="sc-bio1" rows="3" placeholder="First paragraph of researcher bio…"></textarea>
+          </div>
+          <div class="field">
+            <label for="sc-bio2">Bio paragraph 2</label>
+            <textarea id="sc-bio2" rows="3" placeholder="Second paragraph of researcher bio…"></textarea>
+          </div>
+          <div class="field">
+            <label for="sc-credentials">Credentials <span class="field-opt">(one per line)</span></label>
+            <textarea id="sc-credentials" rows="5" placeholder="PhD in Accounting, University of Lagos&#10;Associate Professor, Department of Accounting"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save About page</button>
+        </form>
+      </div>
+
+      <!-- Contact info editor -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.1rem; margin-bottom:4px;">Edit — Contact Information</h2>
+        <p style="font-size:0.88rem; color:var(--ink-soft); margin-bottom:20px;">Update the public contact email and phone number shown on the Contact page.</p>
+        <form id="admin-contact-form" novalidate>
+          <div class="field">
+            <label for="sc-email">Contact email</label>
+            <input type="email" id="sc-email" placeholder="e.g. contact@ledger.ng">
+          </div>
+          <div class="field">
+            <label for="sc-phone">Contact phone (Nigerian format)</label>
+            <input type="tel" id="sc-phone" placeholder="e.g. +234 801 234 5678">
+          </div>
+          <button type="submit" class="btn btn-primary">Save contact info</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

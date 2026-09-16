@@ -1,182 +1,294 @@
 // Ledger — Research Data Marketplace
-// Front-end auth uses localStorage (template/demo only — not for production)
+// All data stored in localStorage (demo/template — NOT for production)
 
 var USERS_KEY    = 'ledger_users';
 var SESSION_KEY  = 'ledger_session';
 var DATASETS_KEY = 'ledger_datasets';
+var TICKETS_KEY  = 'ledger_tickets';
+var PAYMENTS_KEY = 'ledger_payments';
+var CONTENT_KEY  = 'ledger_site_content';
 
 document.addEventListener('DOMContentLoaded', function () {
   seedAdmin();
-  initNavToggle();
-  initNavAuth();
-  initAdminGuard();
-  initFaqAccordion();
-  initTabs();
-  initBuyButtons();
-  initUploadForm();
-  initAuthForms();
-  initContactForm();
-  initSearchFilter();
-  initDashboard();
-  initAdminPanel();
+  seedSiteContent();
+
+  if (isAdminPage()) {
+    if (initAdminPageGuard()) {
+      initAdminSidebar();
+      initAdminDashboard();
+      initAdminUsers();
+      initAdminPapers();
+      initAdminUpload();
+      initAdminPayments();
+      initAdminTickets();
+      initAdminProfile();
+    }
+  } else {
+    initNavToggle();
+    initNavAuth();
+    initDashboardGuard();
+    initFaqAccordion();
+    initTabs();
+    initBuyButtons();
+    initAuthForms();
+    initAboutPage();
+    initContactPage();
+    initTicketForm();
+    initSearchFilter();
+    initUserDashboard();
+  }
 });
 
 /* ============================================================
-   AUTH HELPERS
+   UTILITIES
    ============================================================ */
-function getUsers() {
-  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
-  catch (e) { return []; }
+function isAdminPage() {
+  var page = window.location.pathname.split('/').pop() || '';
+  return page.indexOf('admin-') === 0;
 }
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-
-function getCurrentUser() {
-  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); }
-  catch (e) { return null; }
-}
-function setCurrentUser(user) {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
-}
-function clearCurrentUser() {
-  sessionStorage.removeItem(SESSION_KEY);
+function currentPage() {
+  return window.location.pathname.split('/').pop() || 'index.html';
 }
 
-function hashPw(pw) {
-  // Simple obfuscation for demo purposes only
-  return btoa(unescape(encodeURIComponent(pw)));
+function getUsers()   { try { return JSON.parse(localStorage.getItem(USERS_KEY)    || '[]');  } catch(e) { return []; } }
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+
+function getCurrentUser()  { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch(e) { return null; } }
+function setCurrentUser(u) { sessionStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+function clearCurrentUser(){ sessionStorage.removeItem(SESSION_KEY); }
+
+function hashPw(pw) { return btoa(unescape(encodeURIComponent(pw))); }
+function genId(prefix) { return (prefix||'id')+'-'+Math.random().toString(36).substr(2,9)+'-'+Date.now(); }
+
+function getDatasets()   { try { return JSON.parse(localStorage.getItem(DATASETS_KEY) || '[]');  } catch(e) { return []; } }
+function saveDatasets(d) { localStorage.setItem(DATASETS_KEY, JSON.stringify(d)); }
+
+function getTickets()    { try { return JSON.parse(localStorage.getItem(TICKETS_KEY)  || '[]');  } catch(e) { return []; } }
+function saveTickets(t)  { localStorage.setItem(TICKETS_KEY, JSON.stringify(t)); }
+
+function getPayments()   { try { return JSON.parse(localStorage.getItem(PAYMENTS_KEY) || '[]');  } catch(e) { return []; } }
+function savePayments(p) { localStorage.setItem(PAYMENTS_KEY, JSON.stringify(p)); }
+
+function getSiteContent()   { try { return JSON.parse(localStorage.getItem(CONTENT_KEY) || 'null'); } catch(e) { return null; } }
+function saveSiteContent(c) { localStorage.setItem(CONTENT_KEY, JSON.stringify(c)); }
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function genId() {
-  return 'u-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
-}
+function setText(id, text) { var el=document.getElementById(id); if(el) el.textContent=text; }
+function val(id) { var el=document.getElementById(id); return el ? el.value.trim() : ''; }
 
 /* ============================================================
-   SEED DEFAULT ADMIN ACCOUNT
-   Credentials: admin@ledger.ng / Admin@1234
+   SEEDING
    ============================================================ */
 function seedAdmin() {
   var users = getUsers();
-  if (!users.some(function (u) { return u.email === 'admin@ledger.ng'; })) {
+  if (!users.some(function(u){ return u.email==='admin@ledger.ng'; })) {
     users.push({
-      id: 'admin-seed-001',
-      firstName: 'Ledger',
-      lastName: 'Admin',
-      otherNames: '',
-      email: 'admin@ledger.ng',
-      passwordHash: hashPw('Admin@1234'),
-      isAdmin: true,
-      createdAt: new Date().toISOString()
+      id:'admin-seed-001', firstName:'Ledger', lastName:'Admin', otherNames:'',
+      email:'admin@ledger.ng', passwordHash:hashPw('Admin@1234'),
+      isAdmin:true, createdAt:new Date().toISOString()
     });
     saveUsers(users);
   }
 }
 
-/* ============================================================
-   NAV: Swap "Log in" link for user info when logged in
-   ============================================================ */
-function initNavAuth() {
-  var user = getCurrentUser();
-  var navLinks = document.querySelector('.nav-links');
-  if (!navLinks) return;
-
-  var loginAnchor = navLinks.querySelector('a[href="login.html"]');
-  if (!loginAnchor) return;
-  var loginLi = loginAnchor.parentElement;
-
-  if (user) {
-    // Replace "Log in" with "Dashboard"
-    loginAnchor.textContent = 'Dashboard';
-    loginAnchor.href = 'dashboard.html';
-
-    // Insert Admin link if applicable
-    if (user.isAdmin) {
-      var adminLi = document.createElement('li');
-      adminLi.innerHTML = '<a href="admin.html">Admin</a>';
-      loginLi.parentElement.insertBefore(adminLi, loginLi);
-    }
-
-    // Append Logout
-    var logoutLi = document.createElement('li');
-    logoutLi.innerHTML = '<a href="#" id="nav-logout-btn">Log out</a>';
-    loginLi.parentElement.appendChild(logoutLi);
-    document.getElementById('nav-logout-btn').addEventListener('click', function (e) {
-      e.preventDefault();
-      clearCurrentUser();
-      window.location.href = 'index.html';
+function seedSiteContent() {
+  if (!getSiteContent()) {
+    saveSiteContent({
+      about: {
+        researcherName:'Dr. A. Kenton', department:'Department of Accounting',
+        initials:'AK',
+        bio1:'Dr. Kenton has spent two decades researching tax compliance, audit practice and corporate governance across emerging markets. Ledger was built to make that fieldwork — and the datasets built by colleagues working in the same space — available directly to the researchers who need it, without the delay of formal publication.',
+        bio2:'Every dataset on Ledger has been cleaned, documented and anonymised to the same standard used in Dr. Kenton\'s own published work, so you can build on it with confidence.',
+        credentials:[
+          'PhD in Accounting, University of Lagos',
+          'Associate Professor, Department of Accounting',
+          '15+ peer-reviewed publications in taxation and governance research',
+          'Consultant to national tax authorities on SME compliance'
+        ]
+      },
+      contact:{ email:'contact@ledger.ng', phone:'+234 801 234 5678' }
     });
   }
 }
 
 /* ============================================================
-   ADMIN / AUTH GUARDS
-   - upload.html & admin.html: must be admin
-   - dashboard.html: must be logged in
+   TOAST
    ============================================================ */
-function initAdminGuard() {
-  var page = window.location.pathname.split('/').pop() || 'index.html';
-
-  if (page === 'upload.html' || page === 'admin.html') {
-    var user = getCurrentUser();
-    if (!user) {
-      showToast('Please log in to access this page.');
-      setTimeout(function () { window.location.href = 'login.html'; }, 1600);
-      return;
-    }
-    if (!user.isAdmin) {
-      showToast('Access denied. Administrator privileges required.');
-      setTimeout(function () { window.location.href = 'index.html'; }, 1600);
-    }
+function showToast(message) {
+  var toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast'; toast.className = 'toast';
+    document.body.appendChild(toast);
   }
-
-  if (page === 'dashboard.html') {
-    if (!getCurrentUser()) {
-      window.location.href = 'login.html';
-    }
-  }
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function(){ toast.classList.remove('show'); }, 4200);
 }
 
 /* ============================================================
-   MOBILE NAV TOGGLE
+   PUBLIC NAV — MOBILE TOGGLE
    ============================================================ */
 function initNavToggle() {
   var toggle = document.querySelector('.nav-toggle');
   var links  = document.querySelector('.nav-links');
   if (!toggle || !links) return;
-  toggle.addEventListener('click', function () {
+  toggle.addEventListener('click', function() {
     var open = links.classList.toggle('open');
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 }
 
 /* ============================================================
+   PUBLIC NAV — AUTH STATE (guest / user)
+   Guest:  Log in link visible, no user widget
+   User:   Log in link hidden, name + role pill + logout icon appended
+   ============================================================ */
+function initNavAuth() {
+  var user = getCurrentUser();
+  var nav  = document.querySelector('.nav');
+  var navLinks = document.querySelector('.nav-links');
+  if (!nav || !navLinks) return;
+
+  var loginAnchor = navLinks.querySelector('a[href="login.html"]');
+
+  if (user) {
+    // Hide Log in li
+    if (loginAnchor) loginAnchor.parentElement.style.display = 'none';
+
+    // Append user widget to nav
+    var widget = document.createElement('div');
+    widget.className = 'nav-user-widget';
+    widget.innerHTML =
+      '<a href="dashboard.html" class="nav-user-info" title="My Profile">' +
+        '<span class="nav-user-name">' + escHtml(user.firstName) + '</span>' +
+        '<span class="nav-role-pill">' + (user.isAdmin ? 'Admin' : 'User') + '</span>' +
+      '</a>' +
+      '<button id="nav-logout-btn" class="nav-logout-icon" title="Log out" aria-label="Log out">&#x23FB;</button>';
+    nav.appendChild(widget);
+
+    document.getElementById('nav-logout-btn').addEventListener('click', function() {
+      clearCurrentUser();
+      window.location.href = 'index.html';
+    });
+  }
+  // Guest: Log in link already in HTML — leave visible
+}
+
+/* ============================================================
+   GUARDS
+   ============================================================ */
+function initDashboardGuard() {
+  if (currentPage() === 'dashboard.html' && !getCurrentUser()) {
+    window.location.href = 'login.html';
+  }
+}
+
+function initAdminPageGuard() {
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('Please log in to access this page.');
+    setTimeout(function(){ window.location.href='login.html'; }, 1600);
+    return false;
+  }
+  if (!user.isAdmin) {
+    showToast('Access denied. Administrator privileges required.');
+    setTimeout(function(){ window.location.href='index.html'; }, 1600);
+    return false;
+  }
+  return true;
+}
+
+/* ============================================================
+   ADMIN SIDEBAR
+   ============================================================ */
+function initAdminSidebar() {
+  // Mobile toggle
+  var toggle  = document.getElementById('admin-sidebar-toggle');
+  var sidebar = document.getElementById('admin-sidebar');
+  var overlay = document.getElementById('admin-overlay');
+  if (toggle && sidebar) {
+    toggle.addEventListener('click', function() {
+      sidebar.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('open');
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener('click', function() {
+      if (sidebar) sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+  }
+
+  // Populate sidebar user info
+  var user = getCurrentUser();
+  if (user) {
+    var infoEl = document.getElementById('sidebar-user-info');
+    if (infoEl) {
+      infoEl.innerHTML =
+        '<div class="sidebar-user-name">' + escHtml(user.firstName+' '+user.lastName) + '</div>' +
+        '<div class="sidebar-user-email">' + escHtml(user.email) + '</div>';
+    }
+  }
+
+  // Logout
+  var logoutBtn = document.getElementById('admin-logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function() {
+      clearCurrentUser();
+      window.location.href = 'index.html';
+    });
+  }
+
+  // Highlight active link
+  var pg = currentPage();
+  document.querySelectorAll('.admin-nav-link').forEach(function(link) {
+    if (link.getAttribute('href') === pg) link.classList.add('active');
+  });
+
+  // Open ticket badge on sidebar
+  var openCount = getTickets().filter(function(t){ return t.status==='Open'; }).length;
+  if (openCount > 0) {
+    var ticketLink = document.querySelector('.admin-nav-link[href="admin-tickets.html"]');
+    if (ticketLink) {
+      var badge = document.createElement('span');
+      badge.className = 'nav-badge'; badge.textContent = String(openCount);
+      ticketLink.appendChild(badge);
+    }
+  }
+}
+
+/* ============================================================
    FAQ ACCORDION
    ============================================================ */
 function initFaqAccordion() {
-  document.querySelectorAll('.faq-item').forEach(function (item) {
+  document.querySelectorAll('.faq-item').forEach(function(item) {
     var q = item.querySelector('.faq-q');
     if (!q) return;
-    q.addEventListener('click', function () {
+    q.addEventListener('click', function() {
       var isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(function (other) {
-        if (other !== item) other.classList.remove('open');
-      });
+      document.querySelectorAll('.faq-item.open').forEach(function(o){ if(o!==item) o.classList.remove('open'); });
       item.classList.toggle('open', !isOpen);
     });
   });
 }
 
 /* ============================================================
-   LOGIN / REGISTER TABS
+   TABS
    ============================================================ */
 function initTabs() {
   var tabButtons = document.querySelectorAll('.tab-btn');
   if (!tabButtons.length) return;
-  tabButtons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
+  tabButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
       var target = btn.getAttribute('data-tab');
-      document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
-      document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
       var panel = document.getElementById(target);
       if (panel) panel.classList.add('active');
@@ -185,219 +297,172 @@ function initTabs() {
 }
 
 /* ============================================================
-   BUY BUTTONS (mock purchase flow)
+   BUY BUTTONS
    ============================================================ */
 function initBuyButtons() {
-  document.querySelectorAll('[data-buy]').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
+  document.querySelectorAll('[data-buy]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
       e.preventDefault();
-      if (!getCurrentUser()) {
-        showToast('Please log in to purchase a dataset.');
-        return;
-      }
+      if (!getCurrentUser()) { showToast('Please log in to purchase a dataset.'); return; }
       var name = btn.getAttribute('data-buy');
-      showToast('Added "' + name + '" to your order. A secure payment step would appear here once the gateway is connected.');
+      showToast('Added "'+name+'" to your order. A secure payment step would appear here once the gateway is connected.');
     });
   });
 }
 
 /* ============================================================
-   TOAST NOTIFICATION
-   ============================================================ */
-function showToast(message) {
-  var toast = document.getElementById('toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toast';
-    toast.className = 'toast';
-    document.body.appendChild(toast);
-  }
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(function () { toast.classList.remove('show'); }, 4200);
-}
-
-/* ============================================================
-   UPLOAD FORM (admin only — validated in initAdminGuard)
-   ============================================================ */
-function initUploadForm() {
-  var form = document.getElementById('upload-form');
-  if (!form) return;
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var valid = true;
-
-    form.querySelectorAll('[data-required]').forEach(function (field) {
-      var wrapper = field.closest('.field');
-      var filled = field.type === 'file' ? field.files.length > 0 : field.value.trim().length > 0;
-      if (!filled) { wrapper.classList.add('has-error'); valid = false; }
-      else          { wrapper.classList.remove('has-error'); }
-    });
-
-    var priceField = form.querySelector('#price');
-    if (priceField) {
-      var priceVal = Number(priceField.value);
-      if (!priceField.value || priceVal <= 0) {
-        priceField.closest('.field').classList.add('has-error');
-        valid = false;
-      } else if (priceVal > 5000) {
-        priceField.closest('.field').classList.add('has-error');
-        showToast('Price cannot exceed ₦5,000.');
-        valid = false;
-      }
-    }
-
-    if (!valid) {
-      var firstError = form.querySelector('.has-error');
-      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-
-    // Store dataset in localStorage
-    var datasets = getDatasets();
-    var title    = (form.querySelector('#title') || {}).value || 'Untitled Dataset';
-    datasets.push({
-      id: 'ds-' + Date.now(),
-      title: title,
-      description: (form.querySelector('#description') || {}).value || '',
-      category:    (form.querySelector('#category')    || {}).value || '',
-      price:       priceField ? Number(priceField.value) : 0,
-      downloads:   0,
-      uploadedBy:  getCurrentUser() ? getCurrentUser().email : 'admin',
-      createdAt:   new Date().toISOString()
-    });
-    saveDatasets(datasets);
-
-    form.reset();
-    showToast('"' + title + '" submitted for review. You\'ll be notified once it\'s live in the archive.');
-  });
-}
-
-function getDatasets() {
-  try { return JSON.parse(localStorage.getItem(DATASETS_KEY) || '[]'); }
-  catch (e) { return []; }
-}
-function saveDatasets(ds) {
-  localStorage.setItem(DATASETS_KEY, JSON.stringify(ds));
-}
-
-/* ============================================================
-   AUTH FORMS: LOGIN & REGISTER
+   AUTH FORMS
    ============================================================ */
 function initAuthForms() {
-  /* -- Login -- */
+  // Login
   var loginForm = document.querySelector('[data-auth-form="login"]');
   if (loginForm) {
-    loginForm.addEventListener('submit', function (e) {
+    loginForm.addEventListener('submit', function(e) {
       e.preventDefault();
       clearFormErrors(loginForm);
-
-      var emailEl = document.getElementById('login-email');
-      var pwEl    = document.getElementById('login-password');
-      var email   = emailEl ? emailEl.value.trim().toLowerCase() : '';
-      var pw      = pwEl    ? pwEl.value : '';
-      var ok      = true;
-
-      if (!email) { markError('login-email', 'Email address is required.'); ok = false; }
-      if (!pw)    { markError('login-password', 'Password is required.'); ok = false; }
+      var email = val('login-email').toLowerCase();
+      var pw    = val('login-password');
+      var ok    = true;
+      if (!email) { markError('login-email',    'Email address is required.'); ok=false; }
+      if (!pw)    { markError('login-password', 'Password is required.');      ok=false; }
       if (!ok) return;
-
-      var user = getUsers().find(function (u) {
-        return u.email === email && u.passwordHash === hashPw(pw);
-      });
-
-      if (!user) {
-        showToast('Incorrect email or password. Please try again.');
-        return;
-      }
+      var user = getUsers().find(function(u){ return u.email===email && u.passwordHash===hashPw(pw); });
+      if (!user) { showToast('Incorrect email or password. Please try again.'); return; }
       setCurrentUser(user);
-      showToast('Welcome back, ' + user.firstName + '! Redirecting…');
-      setTimeout(function () { window.location.href = 'dashboard.html'; }, 1300);
+      showToast('Welcome back, '+user.firstName+'!');
+      setTimeout(function(){
+        window.location.href = user.isAdmin ? 'admin-dashboard.html' : 'dashboard.html';
+      }, 1200);
     });
   }
 
-  /* -- Register -- */
+  // Register
   var regForm = document.querySelector('[data-auth-form="register"]');
   if (regForm) {
-    regForm.addEventListener('submit', function (e) {
+    regForm.addEventListener('submit', function(e) {
       e.preventDefault();
       clearFormErrors(regForm);
-
-      var firstName   = val('reg-firstname');
-      var lastName    = val('reg-lastname');
-      var otherNames  = val('reg-othernames');
-      var email       = val('reg-email').toLowerCase();
-      var pw          = val('reg-password');
-      var confirmPw   = val('reg-confirm-password');
+      var firstName  = val('reg-firstname');
+      var lastName   = val('reg-lastname');
+      var otherNames = val('reg-othernames');
+      var email      = val('reg-email').toLowerCase();
+      var pw         = val('reg-password');
+      var confirmPw  = val('reg-confirm-password');
       var ok = true;
-
-      if (!firstName)  { markError('reg-firstname',        'First name is required.');              ok = false; }
-      if (!lastName)   { markError('reg-lastname',         'Last name is required.');               ok = false; }
+      if (!firstName) { markError('reg-firstname','First name is required.');            ok=false; }
+      if (!lastName)  { markError('reg-lastname', 'Last name is required.');             ok=false; }
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                         markError('reg-email',            'Please enter a valid email address.');   ok = false; }
-      if (pw.length < 8){ markError('reg-password',       'Password must be at least 8 characters.'); ok = false; }
-      if (pw !== confirmPw) { markError('reg-confirm-password', 'Passwords do not match.');         ok = false; }
+                        markError('reg-email',    'Please enter a valid email address.'); ok=false; }
+      if (pw.length<8){ markError('reg-password','Password must be at least 8 characters.'); ok=false; }
+      if (pw!==confirmPw){ markError('reg-confirm-password','Passwords do not match.'); ok=false; }
       if (!ok) return;
-
       var users = getUsers();
-      if (users.find(function (u) { return u.email === email; })) {
-        showToast('An account with that email already exists. Please log in.');
-        return;
+      if (users.find(function(u){ return u.email===email; })) {
+        showToast('An account with that email already exists. Please log in.'); return;
       }
-
       var newUser = {
-        id:           genId(),
-        firstName:    firstName,
-        lastName:     lastName,
-        otherNames:   otherNames,
-        email:        email,
-        passwordHash: hashPw(pw),
-        isAdmin:      false,
-        createdAt:    new Date().toISOString()
+        id:genId('u'), firstName:firstName, lastName:lastName, otherNames:otherNames,
+        email:email, passwordHash:hashPw(pw), isAdmin:false, createdAt:new Date().toISOString()
       };
       users.push(newUser);
       saveUsers(users);
       setCurrentUser(newUser);
-      showToast('Account created! Welcome, ' + firstName + '.');
-      setTimeout(function () { window.location.href = 'dashboard.html'; }, 1300);
+      showToast('Account created! Welcome, '+firstName+'.');
+      setTimeout(function(){ window.location.href='dashboard.html'; }, 1200);
     });
   }
 }
 
-function val(id) {
-  var el = document.getElementById(id);
-  return el ? el.value.trim() : '';
-}
 function markError(inputId, message) {
-  var el = document.getElementById(inputId);
-  if (!el) return;
-  var wrapper = el.closest('.field');
-  if (!wrapper) return;
+  var el = document.getElementById(inputId); if (!el) return;
+  var wrapper = el.closest('.field'); if (!wrapper) return;
   wrapper.classList.add('has-error');
   var errEl = wrapper.querySelector('.field-error');
   if (errEl) errEl.textContent = message;
 }
 function clearFormErrors(form) {
-  form.querySelectorAll('.field').forEach(function (f) { f.classList.remove('has-error'); });
+  form.querySelectorAll('.field').forEach(function(f){ f.classList.remove('has-error'); });
 }
 
 /* ============================================================
-   CONTACT FORM (mock submit)
+   ABOUT PAGE — load from localStorage
    ============================================================ */
-function initContactForm() {
-  var form = document.getElementById('contact-form');
+function initAboutPage() {
+  if (!document.getElementById('about-content')) return;
+  var c = getSiteContent();
+  if (!c || !c.about) return;
+  var a = c.about;
+  setText('about-initials', a.initials);
+  setText('about-name',     a.researcherName);
+  setText('about-dept',     a.department);
+  setText('about-bio1',     a.bio1);
+  setText('about-bio2',     a.bio2);
+  var credList = document.getElementById('about-credentials');
+  if (credList && a.credentials) {
+    credList.innerHTML = '';
+    a.credentials.forEach(function(cred) {
+      var li = document.createElement('li'); li.textContent = cred;
+      credList.appendChild(li);
+    });
+  }
+}
+
+/* ============================================================
+   CONTACT PAGE — load clickable info from localStorage
+   ============================================================ */
+function initContactPage() {
+  var c = getSiteContent();
+  if (!c || !c.contact) return;
+  var emailEl = document.getElementById('contact-email-link');
+  if (emailEl) { emailEl.href = 'mailto:'+c.contact.email; emailEl.textContent = c.contact.email; }
+  var phoneEl = document.getElementById('contact-phone-link');
+  if (phoneEl) { phoneEl.href = 'tel:'+c.contact.phone.replace(/\s/g,''); phoneEl.textContent = c.contact.phone; }
+}
+
+/* ============================================================
+   SUPPORT TICKET FORM
+   ============================================================ */
+function initTicketForm() {
+  var form = document.getElementById('ticket-form');
   if (!form) return;
-  form.addEventListener('submit', function (e) {
+  var user       = getCurrentUser();
+  var nameField  = document.getElementById('ticket-name');
+  var emailField = document.getElementById('ticket-email');
+
+  if (user) {
+    if (nameField)  { nameField.value  = user.firstName+' '+user.lastName; nameField.readOnly  = true; }
+    if (emailField) { emailField.value = user.email;                        emailField.readOnly = true; }
+  }
+
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
-    form.reset();
-    showToast('Message sent. Expect a reply within two business days.');
+    var name     = nameField  ? nameField.value.trim()  : '';
+    var email    = emailField ? emailField.value.trim() : '';
+    var subject  = val('ticket-subject');
+    var category = val('ticket-category');
+    var message  = val('ticket-message');
+    if (!name || !email || !subject || !category || !message) {
+      showToast('Please fill in all required fields.'); return;
+    }
+    var tickets = getTickets();
+    var refNum  = 'TKT-'+String(tickets.length+1).padStart(5,'0');
+    tickets.push({
+      ref:refNum, name:name, email:email,
+      subject:subject, category:category, message:message,
+      status:'Open', createdAt:new Date().toISOString()
+    });
+    saveTickets(tickets);
+    form.style.display = 'none';
+    var confirm = document.getElementById('ticket-confirm');
+    if (confirm) {
+      setText('ticket-ref-num', refNum);
+      confirm.style.display = 'block';
+    }
   });
 }
 
 /* ============================================================
-   BROWSE PAGE: live search + category filter
+   BROWSE — live search + filter
    ============================================================ */
 function initSearchFilter() {
   var searchInput = document.getElementById('dataset-search');
@@ -406,148 +471,385 @@ function initSearchFilter() {
   var items      = Array.prototype.slice.call(list.querySelectorAll('.data-item'));
   var checkboxes = document.querySelectorAll('.filter-option input[type="checkbox"]');
   var emptyState = document.getElementById('empty-state');
-
   function applyFilters() {
     var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
     var activeCats = Array.prototype.slice.call(checkboxes)
-      .filter(function (c) { return c.checked; })
-      .map(function (c) { return c.value; });
+      .filter(function(c){ return c.checked; }).map(function(c){ return c.value; });
     var visible = 0;
-    items.forEach(function (item) {
-      var text = (item.getAttribute('data-search') || '').toLowerCase();
-      var cat  = item.getAttribute('data-category') || '';
-      var show = (!query || text.indexOf(query) !== -1) &&
-                 (activeCats.length === 0 || activeCats.indexOf(cat) !== -1);
+    items.forEach(function(item) {
+      var text = (item.getAttribute('data-search')||'').toLowerCase();
+      var cat  =  item.getAttribute('data-category')||'';
+      var show = (!query || text.indexOf(query)!==-1) && (activeCats.length===0 || activeCats.indexOf(cat)!==-1);
       item.style.display = show ? '' : 'none';
       if (show) visible++;
     });
-    if (emptyState) emptyState.style.display = visible === 0 ? 'block' : 'none';
+    if (emptyState) emptyState.style.display = visible===0 ? 'block' : 'none';
   }
-
   if (searchInput) searchInput.addEventListener('input', applyFilters);
-  checkboxes.forEach(function (c) { c.addEventListener('change', applyFilters); });
+  checkboxes.forEach(function(c){ c.addEventListener('change', applyFilters); });
 }
 
 /* ============================================================
-   DASHBOARD
+   USER DASHBOARD / MY PROFILE
    ============================================================ */
-function initDashboard() {
+function initUserDashboard() {
   if (!document.getElementById('dashboard-main')) return;
   var user = getCurrentUser();
   if (!user) return;
 
-  setText('dash-name',   user.firstName + ' ' + user.lastName + (user.otherNames ? ' ' + user.otherNames : ''));
+  var fullName = user.firstName+' '+user.lastName+(user.otherNames?' '+user.otherNames:'');
+  setText('dash-name',   fullName);
   setText('dash-email',  user.email);
   setText('dash-role',   user.isAdmin ? 'Administrator' : 'Researcher');
-  setText('dash-joined', new Date(user.createdAt).toLocaleDateString('en-NG', { year:'numeric', month:'long', day:'numeric' }));
+  setText('dash-joined', new Date(user.createdAt).toLocaleDateString('en-NG',{year:'numeric',month:'long',day:'numeric'}));
 
   var adminLink = document.getElementById('dash-admin-link');
   if (adminLink) adminLink.style.display = user.isAdmin ? 'inline-flex' : 'none';
 
   var logoutBtn = document.getElementById('dash-logout');
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      clearCurrentUser();
-      window.location.href = 'index.html';
+    logoutBtn.addEventListener('click', function(e) {
+      e.preventDefault(); clearCurrentUser(); window.location.href='index.html';
     });
   }
-}
 
-function setText(id, text) {
-  var el = document.getElementById(id);
-  if (el) el.textContent = text;
+  // Mirror to detail table
+  setTimeout(function() {
+    var m = function(f,t){ var s=document.getElementById(f),d=document.getElementById(t); if(s&&d) d.textContent=s.textContent; };
+    m('dash-name','dash-name-detail'); m('dash-email','dash-email-detail');
+    m('dash-role','dash-role-detail'); m('dash-joined','dash-joined-detail');
+  }, 60);
+
+  // Recent transfers
+  var payments = getPayments().filter(function(p){ return p.userEmail===user.email; });
+  var tbody = document.getElementById('transfers-tbody');
+  var emptyState = document.getElementById('transfers-empty');
+  var tableWrap  = document.getElementById('transfers-table-wrap');
+  if (tbody) {
+    if (payments.length===0) {
+      if (emptyState) emptyState.style.display='block';
+      if (tableWrap)  tableWrap.style.display='none';
+    } else {
+      if (emptyState) emptyState.style.display='none';
+      var totalSpent = payments.reduce(function(s,p){ return s+Number(p.amount); }, 0);
+      setText('dash-total-spent',        '₦'+totalSpent.toLocaleString());
+      setText('dash-total-purchases',    String(payments.length));
+      setText('dash-total-purchases-dl', String(payments.length));
+      payments.slice().reverse().forEach(function(p) {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>'+new Date(p.createdAt).toLocaleDateString('en-NG')+'</td>'+
+          '<td>'+escHtml(p.datasetTitle)+'</td>'+
+          '<td>₦'+Number(p.amount).toLocaleString()+'</td>'+
+          '<td><span class="status-badge status-'+p.status.toLowerCase()+'">'+escHtml(p.status)+'</span></td>';
+        tbody.appendChild(tr);
+      });
+    }
+  }
 }
 
 /* ============================================================
-   ADMIN PANEL
+   ADMIN — DASHBOARD STATS
    ============================================================ */
-function initAdminPanel() {
-  if (!document.getElementById('admin-main')) return;
-  var user = getCurrentUser();
-  if (!user || !user.isAdmin) return;
+function initAdminDashboard() {
+  if (!document.getElementById('admin-dash-stats')) return;
+  var datasets  = getDatasets();
+  var users     = getUsers();
+  var payments  = getPayments();
+  var totalDL   = datasets.reduce(function(s,d){ return s+(d.downloads||0); }, 0);
+  var totalRev  = payments.reduce(function(s,p){ return s+Number(p.amount); }, 0);
+  setText('stat-papers',    String(datasets.length));
+  setText('stat-downloads', String(totalDL));
+  setText('stat-revenue',   '₦'+totalRev.toLocaleString());
+  setText('stat-users',     String(users.length));
 
-  renderUserTable();
-  renderDatasetTable();
-
-  // Upload form on admin page
-  var adminUploadForm = document.getElementById('admin-upload-form');
-  if (adminUploadForm) {
-    adminUploadForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var title    = (adminUploadForm.querySelector('#a-title')       || {}).value || '';
-      var desc     = (adminUploadForm.querySelector('#a-description') || {}).value || '';
-      var category = (adminUploadForm.querySelector('#a-category')    || {}).value || '';
-      var price    = Number((adminUploadForm.querySelector('#a-price') || {}).value || 0);
-      if (!title || !category || !price) { showToast('Please fill in all required fields.'); return; }
-      if (price > 5000) { showToast('Price cannot exceed ₦5,000.'); return; }
-      var datasets = getDatasets();
-      datasets.push({ id:'ds-'+Date.now(), title:title, description:desc, category:category, price:price, downloads:0, uploadedBy:user.email, createdAt:new Date().toISOString() });
-      saveDatasets(datasets);
-      adminUploadForm.reset();
-      showToast('"' + title + '" added to the archive.');
-      renderDatasetTable();
-    });
-  }
+  // Recent activity
+  var actEl = document.getElementById('admin-recent-activity');
+  if (!actEl) return;
+  var allEvents = [];
+  getUsers().slice(-3).forEach(function(u){ allEvents.push({type:'user',label:'New user registered: '+escHtml(u.firstName+' '+u.lastName),date:u.createdAt}); });
+  getTickets().slice(-3).forEach(function(t){ allEvents.push({type:'ticket',label:'Support ticket '+escHtml(t.ref)+': '+escHtml(t.subject),date:t.createdAt}); });
+  getPayments().slice(-3).forEach(function(p){ allEvents.push({type:'payment',label:'Payment received — '+escHtml(p.datasetTitle)+' ₦'+Number(p.amount).toLocaleString(),date:p.createdAt}); });
+  allEvents.sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
+  actEl.innerHTML = '';
+  if (allEvents.length===0) { actEl.innerHTML='<p style="color:var(--ink-soft);padding:16px 0;">No recent activity yet.</p>'; return; }
+  allEvents.slice(0,8).forEach(function(ev) {
+    var div = document.createElement('div');
+    div.className = 'activity-item activity-'+ev.type;
+    div.innerHTML = '<span class="activity-label">'+ev.label+'</span><span class="activity-date">'+new Date(ev.date).toLocaleDateString('en-NG')+'</span>';
+    actEl.appendChild(div);
+  });
 }
 
-function renderUserTable() {
-  var tbody = document.getElementById('admin-users-tbody');
-  if (!tbody) return;
+/* ============================================================
+   ADMIN — USERS
+   ============================================================ */
+function initAdminUsers() {
+  if (!document.getElementById('admin-users-tbody')) return;
+  renderAdminUsers();
+}
+function renderAdminUsers() {
+  var tbody = document.getElementById('admin-users-tbody'); if (!tbody) return;
   var users = getUsers();
   tbody.innerHTML = '';
-  users.forEach(function (u) {
-    var isProtected = u.id === 'admin-seed-001';
+  users.forEach(function(u) {
+    var prot = u.id==='admin-seed-001';
     var tr = document.createElement('tr');
     tr.innerHTML =
-      '<td>' + escHtml(u.firstName + ' ' + u.lastName) + (u.otherNames ? ' <span class="other-names">' + escHtml(u.otherNames) + '</span>' : '') + '</td>' +
-      '<td>' + escHtml(u.email) + '</td>' +
-      '<td>' + new Date(u.createdAt).toLocaleDateString('en-NG') + '</td>' +
-      '<td><span class="role-badge ' + (u.isAdmin ? 'role-admin' : 'role-user') + '">' + (u.isAdmin ? 'Admin' : 'User') + '</span></td>' +
-      '<td>' + (isProtected
-        ? '<span style="font-size:0.8rem;color:var(--ink-soft);">Protected</span>'
-        : '<button class="btn btn-small ' + (u.isAdmin ? 'btn-secondary' : 'btn-primary') + ' toggle-admin-btn" data-uid="' + escHtml(u.id) + '">' + (u.isAdmin ? 'Revoke Admin' : 'Make Admin') + '</button>') +
+      '<td>'+escHtml(u.firstName+' '+u.lastName)+(u.otherNames?' <span class="other-names">'+escHtml(u.otherNames)+'</span>':'')+'</td>'+
+      '<td>'+escHtml(u.email)+'</td>'+
+      '<td>'+new Date(u.createdAt).toLocaleDateString('en-NG')+'</td>'+
+      '<td><span class="role-badge '+(u.isAdmin?'role-admin':'role-user')+'">'+(u.isAdmin?'Admin':'User')+'</span></td>'+
+      '<td>'+(prot?'<span style="font-size:0.8rem;color:var(--ink-soft);">Protected</span>':
+        '<button class="btn btn-small '+(u.isAdmin?'btn-secondary':'btn-primary')+' toggle-admin-btn" data-uid="'+escHtml(u.id)+'">'+(u.isAdmin?'Revoke Admin':'Make Admin')+'</button>')+'</td>';
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('.toggle-admin-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var uid = btn.getAttribute('data-uid');
+      var users = getUsers();
+      var target = users.find(function(u){ return u.id===uid; }); if(!target) return;
+      target.isAdmin = !target.isAdmin;
+      saveUsers(users);
+      showToast(target.firstName+' '+target.lastName+(target.isAdmin?' is now an admin.':"'s admin role removed."));
+      renderAdminUsers();
+    });
+  });
+}
+
+/* ============================================================
+   ADMIN — PAPERS
+   ============================================================ */
+function initAdminPapers() {
+  if (!document.getElementById('admin-papers-tbody')) return;
+  renderAdminPapers();
+}
+function renderAdminPapers() {
+  var tbody = document.getElementById('admin-papers-tbody'); if (!tbody) return;
+  var datasets = getDatasets();
+  tbody.innerHTML = '';
+  if (!datasets.length) {
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--ink-soft);">No datasets uploaded yet.</td></tr>'; return;
+  }
+  datasets.forEach(function(ds) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>'+escHtml(ds.title)+'</td>'+
+      '<td>'+escHtml(ds.category)+'</td>'+
+      '<td>₦'+Number(ds.price).toLocaleString()+'</td>'+
+      '<td class="dl-stat">⬇ '+(ds.downloads||0)+'</td>'+
+      '<td>'+escHtml(ds.uploadedBy||'—')+'</td>'+
+      '<td>'+new Date(ds.createdAt).toLocaleDateString('en-NG')+'</td>'+
+      '<td><button class="btn btn-small btn-secondary delete-ds-btn" data-dsid="'+escHtml(ds.id)+'">Delete</button></td>';
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('.delete-ds-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (!confirm('Delete this dataset? This cannot be undone.')) return;
+      var dsid = btn.getAttribute('data-dsid');
+      saveDatasets(getDatasets().filter(function(d){ return d.id!==dsid; }));
+      showToast('Dataset deleted.'); renderAdminPapers();
+    });
+  });
+}
+
+/* ============================================================
+   ADMIN — UPLOAD
+   ============================================================ */
+function initAdminUpload() {
+  var form = document.getElementById('admin-upload-form'); if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var title    = val('a-title');
+    var desc     = val('a-description');
+    var category = val('a-category');
+    var price    = Number(val('a-price'));
+    var user     = getCurrentUser();
+    if (!title||!category||!price) { showToast('Please fill in all required fields.'); return; }
+    if (price>5000) { showToast('Price cannot exceed ₦5,000.'); return; }
+    var datasets = getDatasets();
+    datasets.push({
+      id:genId('ds'), title:title, description:desc, category:category,
+      price:price, downloads:0, uploadedBy:user?user.email:'admin', createdAt:new Date().toISOString()
+    });
+    saveDatasets(datasets);
+    form.reset();
+    showToast('"'+title+'" added to the archive successfully.');
+  });
+}
+
+/* ============================================================
+   ADMIN — PAYMENTS
+   ============================================================ */
+function initAdminPayments() {
+  var tbody = document.getElementById('admin-payments-tbody'); if (!tbody) return;
+  var payments = getPayments();
+  tbody.innerHTML = '';
+  if (!payments.length) {
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--ink-soft);">No payment records yet.</td></tr>'; return;
+  }
+  payments.slice().reverse().forEach(function(p) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>'+new Date(p.createdAt).toLocaleDateString('en-NG')+'</td>'+
+      '<td>'+escHtml(p.userName||'—')+'</td>'+
+      '<td>'+escHtml(p.userEmail||'—')+'</td>'+
+      '<td>'+escHtml(p.datasetTitle||'—')+'</td>'+
+      '<td>₦'+Number(p.amount).toLocaleString()+'</td>'+
+      '<td><span class="status-badge status-'+(p.status||'pending').toLowerCase()+'">'+escHtml(p.status||'Pending')+'</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+/* ============================================================
+   ADMIN — TICKETS
+   ============================================================ */
+function initAdminTickets() {
+  if (!document.getElementById('admin-tickets-tbody')) return;
+  renderAdminTickets();
+
+  // Modal close
+  var closeBtn = document.getElementById('modal-close');
+  var modal    = document.getElementById('ticket-modal');
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', function(){ modal.style.display='none'; });
+    modal.addEventListener('click', function(e){ if(e.target===modal) modal.style.display='none'; });
+  }
+}
+function renderAdminTickets() {
+  var tbody = document.getElementById('admin-tickets-tbody'); if (!tbody) return;
+  var tickets = getTickets();
+  tbody.innerHTML = '';
+  if (!tickets.length) {
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--ink-soft);">No support tickets yet.</td></tr>'; return;
+  }
+  tickets.slice().reverse().forEach(function(t) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><strong>'+escHtml(t.ref)+'</strong></td>'+
+      '<td>'+new Date(t.createdAt).toLocaleDateString('en-NG')+'</td>'+
+      '<td>'+escHtml(t.name)+'<br><small style="color:var(--ink-soft);">'+escHtml(t.email)+'</small></td>'+
+      '<td><span class="tag">'+escHtml(t.category)+'</span></td>'+
+      '<td>'+escHtml(t.subject)+'</td>'+
+      '<td><span class="status-badge status-'+t.status.toLowerCase()+'">'+t.status+'</span></td>'+
+      '<td>'+
+        '<button class="btn btn-small btn-secondary view-ticket-btn" data-ref="'+escHtml(t.ref)+'">View</button> '+
+        (t.status==='Open'?'<button class="btn btn-small btn-primary resolve-ticket-btn" data-ref="'+escHtml(t.ref)+'">Resolve</button>':'')+
       '</td>';
     tbody.appendChild(tr);
   });
-
-  tbody.querySelectorAll('.toggle-admin-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var uid   = btn.getAttribute('data-uid');
-      var users = getUsers();
-      var target = users.find(function (u) { return u.id === uid; });
-      if (!target) return;
-      target.isAdmin = !target.isAdmin;
-      saveUsers(users);
-      showToast((target.isAdmin ? '✓ ' : '✗ ') + target.firstName + ' ' + target.lastName + (target.isAdmin ? ' is now an administrator.' : '\'s admin role has been removed.'));
-      renderUserTable();
+  tbody.querySelectorAll('.view-ticket-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var ref = btn.getAttribute('data-ref');
+      var ticket = getTickets().find(function(t){ return t.ref===ref; }); if (!ticket) return;
+      var modal = document.getElementById('ticket-modal'); if (!modal) return;
+      setText('modal-ref',      ticket.ref);
+      setText('modal-from',     ticket.name+' ('+ticket.email+')');
+      setText('modal-subject',  ticket.subject);
+      setText('modal-category', ticket.category);
+      setText('modal-message',  ticket.message);
+      setText('modal-status',   ticket.status);
+      setText('modal-date',     new Date(ticket.createdAt).toLocaleString('en-NG'));
+      modal.style.display = 'flex';
+    });
+  });
+  tbody.querySelectorAll('.resolve-ticket-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var ref = btn.getAttribute('data-ref');
+      var tickets = getTickets();
+      var target  = tickets.find(function(t){ return t.ref===ref; }); if (!target) return;
+      target.status = 'Resolved';
+      saveTickets(tickets);
+      showToast('Ticket '+ref+' marked as resolved.');
+      renderAdminTickets();
+      // Update sidebar badge
+      var openCount = tickets.filter(function(t){ return t.status==='Open'; }).length;
+      var badge = document.querySelector('.admin-nav-link[href="admin-tickets.html"] .nav-badge');
+      if (badge) { if (openCount>0) badge.textContent=String(openCount); else badge.remove(); }
     });
   });
 }
 
-function renderDatasetTable() {
-  var tbody = document.getElementById('admin-datasets-tbody');
-  if (!tbody) return;
-  var datasets = getDatasets();
-  tbody.innerHTML = '';
-  if (datasets.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="color:var(--ink-soft);text-align:center;padding:24px 0;">No datasets uploaded yet via this panel.</td></tr>';
-    return;
-  }
-  datasets.forEach(function (ds) {
-    var tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td>' + escHtml(ds.title) + '</td>' +
-      '<td>' + escHtml(ds.category) + '</td>' +
-      '<td>₦' + Number(ds.price).toLocaleString() + '</td>' +
-      '<td class="dl-stat">⬇ ' + ds.downloads + '</td>' +
-      '<td>' + new Date(ds.createdAt).toLocaleDateString('en-NG') + '</td>';
-    tbody.appendChild(tr);
-  });
-}
+/* ============================================================
+   ADMIN — PROFILE + SITE CONTENT EDITOR
+   ============================================================ */
+function initAdminProfile() {
+  var profileForm = document.getElementById('admin-profile-form'); if (!profileForm) return;
+  var user = getCurrentUser(); if (!user) return;
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // Pre-fill personal info
+  var fields = {
+    'ap-firstname': user.firstName,
+    'ap-lastname':  user.lastName,
+    'ap-email':     user.email
+  };
+  Object.keys(fields).forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = fields[id];
+  });
+
+  // Pre-fill site content
+  var c = getSiteContent();
+  if (c) {
+    if (c.about) {
+      var aboutFields = {
+        'sc-researcher-name': c.about.researcherName||'',
+        'sc-department':      c.about.department||'',
+        'sc-initials':        c.about.initials||'',
+        'sc-bio1':            c.about.bio1||'',
+        'sc-bio2':            c.about.bio2||'',
+        'sc-credentials':     (c.about.credentials||[]).join('\n')
+      };
+      Object.keys(aboutFields).forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.value = aboutFields[id];
+      });
+    }
+    if (c.contact) {
+      var el; 
+      el = document.getElementById('sc-email'); if (el) el.value = c.contact.email||'';
+      el = document.getElementById('sc-phone'); if (el) el.value = c.contact.phone||'';
+    }
+  }
+
+  // Save personal info
+  profileForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var users = getUsers();
+    var idx   = users.findIndex(function(u){ return u.id===user.id; }); if (idx===-1) return;
+    var fn = val('ap-firstname'); var ln = val('ap-lastname');
+    if (fn) users[idx].firstName = fn;
+    if (ln) users[idx].lastName  = ln;
+    saveUsers(users);
+    setCurrentUser(users[idx]);
+    showToast('Profile updated successfully.');
+  });
+
+  // Save about content
+  var aboutForm = document.getElementById('admin-about-form');
+  if (aboutForm) {
+    aboutForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var c = getSiteContent() || { about:{}, contact:{} };
+      c.about.researcherName = val('sc-researcher-name');
+      c.about.department     = val('sc-department');
+      c.about.initials       = val('sc-initials');
+      c.about.bio1           = val('sc-bio1');
+      c.about.bio2           = val('sc-bio2');
+      c.about.credentials    = val('sc-credentials').split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+      saveSiteContent(c);
+      showToast('About page content saved successfully.');
+    });
+  }
+
+  // Save contact info
+  var contactForm = document.getElementById('admin-contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var c = getSiteContent() || { about:{}, contact:{} };
+      c.contact.email = val('sc-email');
+      c.contact.phone = val('sc-phone');
+      saveSiteContent(c);
+      showToast('Contact information saved. Changes will appear on the Contact page.');
+    });
+  }
 }
