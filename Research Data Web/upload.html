@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>List a dataset — Ledger</title>
+<meta name="description" content="Submit your research dataset to the Ledger archive. Set your own price in NGN and reach researchers who need your data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
@@ -30,7 +31,7 @@
 <main id="main">
   <section style="padding-bottom: 0;">
     <div class="wrap">
-      <p class="eyebrow">For dataset owners</p>
+      <p class="eyebrow">For administrators</p>
       <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem);">List a dataset</h1>
       <p class="lede">Fill in the details below. Every submission is reviewed before it appears in the archive.</p>
     </div>
@@ -39,7 +40,7 @@
   <section>
     <div class="wrap">
       <div class="form-panel">
-        <div class="form-note">This form is admin-only for now. Once you're signed in as the account owner, submissions go straight to review.</div>
+        <div class="form-note admin-only-note">🔒 This page is restricted to administrators. You are logged in as an admin.</div>
 
         <form id="upload-form" novalidate>
           <div class="field">
@@ -69,9 +70,10 @@
           </div>
 
           <div class="field">
-            <label for="price">Price (USD)</label>
-            <input type="number" id="price" name="price" data-required min="1" step="1" placeholder="e.g. 75">
-            <div class="field-error">Please set a price of at least $1.</div>
+            <label for="price">Price (NGN) — maximum ₦5,000</label>
+            <input type="number" id="price" name="price" data-required min="1" max="5000" step="1" placeholder="e.g. 2500">
+            <div class="hint">Set a price between ₦1 and ₦5,000.</div>
+            <div class="field-error">Please set a valid price (₦1–₦5,000).</div>
           </div>
 
           <div class="field">

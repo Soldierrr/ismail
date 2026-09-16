@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — Ledger</title>
+<meta name="description" content="Your Ledger account dashboard. View your profile, purchases and account settings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand">Ledger<span>.</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="browse.html">Browse</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Log in</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <div id="dashboard-main">
+    <section style="padding-bottom: 0;">
+      <div class="wrap">
+        <p class="eyebrow">Account</p>
+        <h1 style="font-size: clamp(1.6rem, 3vw, 2.2rem);">My Dashboard</h1>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap dash-layout">
+
+        <!-- Profile card -->
+        <div class="dash-profile-card">
+          <div class="dash-avatar" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </div>
+          <h2 class="dash-full-name" id="dash-name">—</h2>
+          <div class="dash-role-badge" id="dash-role">Researcher</div>
+
+          <dl class="dash-meta">
+            <dt>Email</dt>
+            <dd id="dash-email">—</dd>
+            <dt>Member since</dt>
+            <dd id="dash-joined">—</dd>
+          </dl>
+
+          <div class="dash-actions">
+            <a href="admin.html" id="dash-admin-link" class="btn btn-primary" style="display:none;">
+              ⚙ Admin Panel
+            </a>
+            <a href="browse.html" class="btn btn-secondary">Browse datasets</a>
+            <a href="#" id="dash-logout" class="btn btn-outline-danger">Log out</a>
+          </div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="dash-content">
+          <div class="dash-stat-cards">
+            <div class="dash-stat-card">
+              <div class="dash-stat-num">0</div>
+              <div class="dash-stat-label">Datasets purchased</div>
+            </div>
+            <div class="dash-stat-card">
+              <div class="dash-stat-num">0</div>
+              <div class="dash-stat-label">Downloads used</div>
+            </div>
+            <div class="dash-stat-card">
+              <div class="dash-stat-num">₦0</div>
+              <div class="dash-stat-label">Total spent</div>
+            </div>
+          </div>
+
+          <div class="dash-section">
+            <h3>Recent purchases</h3>
+            <div class="dash-empty-state">
+              <p>You haven't purchased any datasets yet.</p>
+              <a href="browse.html" class="btn btn-primary btn-small">Browse the archive</a>
+            </div>
+          </div>
+
+          <div class="dash-section">
+            <h3>Account information</h3>
+            <table class="detail-meta-table" style="max-width: 480px;">
+              <tr><td>Full name</td><td id="dash-name-detail">—</td></tr>
+              <tr><td>Email</td><td id="dash-email-detail">—</td></tr>
+              <tr><td>Role</td><td id="dash-role-detail">—</td></tr>
+              <tr><td>Joined</td><td id="dash-joined-detail">—</td></tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <a href="index.html" class="brand" style="font-size:1.2rem;">Ledger<span>.</span></a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="browse.html">Browse datasets</a>
+        </div>
+        <div class="footer-col">
+          <h5>About</h5>
+          <a href="about.html">The researcher</a>
+          <a href="contact.html">Contact &amp; FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Ledger. Research data, sold directly by the people who collected it.</div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+  // Duplicate info into detail table (after initDashboard runs)
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      var copy = function(fromId, toId) {
+        var src = document.getElementById(fromId);
+        var dst = document.getElementById(toId);
+        if (src && dst) dst.textContent = src.textContent;
+      };
+      copy('dash-name',   'dash-name-detail');
+      copy('dash-email',  'dash-email-detail');
+      copy('dash-role',   'dash-role-detail');
+      copy('dash-joined', 'dash-joined-detail');
+    }, 50);
+  });
+</script>
+</body>
+</html>
