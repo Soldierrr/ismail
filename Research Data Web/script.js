@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initAboutPage();
     initContactPage();
     initTicketForm();
+    initBrowsePage();
     initSearchFilter();
     initUserDashboard();
     initProfileEditForms();
@@ -147,10 +148,17 @@ function initNavToggle() {
 }
 
 /* ============================================================
-   PUBLIC NAV — AUTH STATE (guest / user)
-   Guest:  Log in link visible, no user widget
-   User:   Log in link hidden, stacked name + role (not linked) + door logout
+   PUBLIC NAV — AUTH STATE
    ============================================================ */
+var LOGOUT_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"' +
+  ' stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"' +
+  ' width="18" height="18" aria-hidden="true">' +
+  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>' +
+  '<polyline points="16 17 21 12 16 7"/>' +
+  '<line x1="21" y1="12" x2="9" y2="12"/>' +
+  '</svg>';
+
 function initNavAuth() {
   var user = getCurrentUser();
   var nav  = document.querySelector('.nav');
@@ -172,7 +180,7 @@ function initNavAuth() {
         '<div class="nav-user-name">' + fullName + '</div>' +
         '<div class="nav-user-role">' + roleName + '</div>' +
       '</div>' +
-      '<button id="nav-logout-btn" class="nav-logout-icon" title="Log out" aria-label="Log out">&#x1F6AA;</button>';
+      '<button id="nav-logout-btn" class="nav-logout-icon" title="Log out" aria-label="Log out">' + LOGOUT_SVG + '</button>';
     nav.appendChild(widget);
 
     document.getElementById('nav-logout-btn').addEventListener('click', function() {
@@ -276,10 +284,10 @@ function initAdminSidebar() {
     }
   }
 
-  // Logout — door emoji
+  // Logout — SVG icon
   var logoutBtn = document.getElementById('admin-logout-btn');
   if (logoutBtn) {
-    logoutBtn.innerHTML = '&#x1F6AA; Log out';
+    logoutBtn.innerHTML = LOGOUT_SVG + ' Log out';
     logoutBtn.addEventListener('click', function() {
       clearCurrentUser();
       window.location.href = 'index.html';
@@ -488,6 +496,71 @@ function initTicketForm() {
 /* ============================================================
    BROWSE — live search + filter
    ============================================================ */
+/* ============================================================
+   BROWSE PAGE — dynamically render localStorage datasets
+   Merges seeded static cards with admin-uploaded ones.
+   ============================================================ */
+var SEED_DATASETS = [
+  { id:'seed-001', title:'SME Tax Compliance Panel, 2015–2024',
+    description:'Firm-level compliance and filing behaviour across 4,200 small and medium enterprises.',
+    category:'taxation', tags:['Taxation','Panel data'], price:4500, downloads:312,
+    createdAt:'2024-01-10T00:00:00.000Z' },
+  { id:'seed-002', title:'Audit Fee Determinants Dataset',
+    description:'Ten years of audit fee, tenure and firm-size data across listed companies in 12 markets.',
+    category:'auditing', tags:['Auditing','Cross-country'], price:5000, downloads:198,
+    createdAt:'2024-02-14T00:00:00.000Z' },
+  { id:'seed-003', title:'Corporate Governance Index Data',
+    description:'Governance scoring for 600 emerging-market firms, built from board and disclosure records.',
+    category:'governance', tags:['Governance','Emerging markets'], price:4800, downloads:147,
+    createdAt:'2024-03-01T00:00:00.000Z' },
+  { id:'seed-004', title:'SME Working Capital Survey',
+    description:'Survey responses on liquidity management practices from 1,050 small business owners.',
+    category:'finance', tags:['Corporate finance','Survey data'], price:3500, downloads:89,
+    createdAt:'2024-04-05T00:00:00.000Z' },
+  { id:'seed-005', title:'Informal Sector Revenue Estimates',
+    description:'Municipal-level revenue estimates for informal trading activity across 40 districts.',
+    category:'economics', tags:['Economics','Regional data'], price:2500, downloads:64,
+    createdAt:'2024-05-20T00:00:00.000Z' },
+  { id:'seed-006', title:'Dividend Policy Panel, 2012–2023',
+    description:'Payout ratios and dividend announcements for 300 listed firms over eleven years.',
+    category:'finance', tags:['Corporate finance','Panel data'], price:4900, downloads:211,
+    createdAt:'2024-06-11T00:00:00.000Z' }
+];
+
+function initBrowsePage() {
+  var list = document.getElementById('dataset-list'); if (!list) return;
+
+  // Load admin-uploaded datasets from localStorage
+  var uploaded = getDatasets();
+
+  // Skip render if no uploaded datasets (static HTML cards already in DOM)
+  if (!uploaded.length) return;
+
+  // We have uploaded datasets: clear static HTML and re-render ALL (seed + uploaded)
+  list.innerHTML = '';
+  var all = SEED_DATASETS.concat(uploaded);
+  all.forEach(function(ds) {
+    var tags = (ds.tags || []).concat(ds.category ? [] : []).slice(0,2);
+    if (!tags.length && ds.category) tags = [ds.category.charAt(0).toUpperCase()+ds.category.slice(1)];
+    var tagHtml = tags.map(function(t){ return '<span class="tag">'+escHtml(t)+'</span>'; }).join('');
+    var a = document.createElement('a');
+    a.href = 'dataset.html';
+    a.className = 'data-item';
+    a.setAttribute('data-category', ds.category || 'other');
+    a.setAttribute('data-search', (ds.title+' '+ds.description+' '+(ds.tags||[]).join(' ')).toLowerCase());
+    a.setAttribute('data-dsid', ds.id);
+    a.innerHTML =
+      '<div>' +
+        '<h3 class="data-title">' + escHtml(ds.title) + '</h3>' +
+        '<p class="data-desc">'  + escHtml(ds.description || '') + '</p>' +
+        '<div class="data-tags">' + tagHtml + '</div>' +
+      '</div>' +
+      '<div class="data-stats"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="vertical-align:middle;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + (ds.downloads || 0) + '</div>' +
+      '<div class="data-price">₦' + Number(ds.price).toLocaleString() + '</div>';
+    list.appendChild(a);
+  });
+}
+
 function initSearchFilter() {
   var searchInput = document.getElementById('dataset-search');
   var list        = document.getElementById('dataset-list');
@@ -678,10 +751,17 @@ function renderAdminPapers() {
 }
 
 /* ============================================================
-   ADMIN — UPLOAD
+   ADMIN — UPLOAD (PDF / DOCX only)
    ============================================================ */
 function initAdminUpload() {
-  var form = document.getElementById('admin-upload-form'); if (!form) return;
+  var form     = document.getElementById('admin-upload-form'); if (!form) return;
+  var fileInput = document.getElementById('a-file');
+
+  // Restrict file picker to PDF / DOCX at the browser level
+  if (fileInput) {
+    fileInput.setAttribute('accept', '.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  }
+
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     var title    = val('a-title');
@@ -689,16 +769,37 @@ function initAdminUpload() {
     var category = val('a-category');
     var price    = Number(val('a-price'));
     var user     = getCurrentUser();
-    if (!title||!category||!price) { showToast('Please fill in all required fields.'); return; }
-    if (price>5000) { showToast('Price cannot exceed ₦5,000.'); return; }
+
+    if (!title || !category || !price) { showToast('Please fill in all required fields.'); return; }
+    if (price > 5000) { showToast('Price cannot exceed ₦5,000.'); return; }
+
+    // File type validation
+    if (fileInput && fileInput.files && fileInput.files.length > 0) {
+      var file = fileInput.files[0];
+      var name = file.name.toLowerCase();
+      var ok   = name.endsWith('.pdf') || name.endsWith('.docx');
+      if (!ok) {
+        showToast('Only PDF and DOCX files are accepted.');
+        return;
+      }
+    }
+
     var datasets = getDatasets();
     datasets.push({
-      id:genId('ds'), title:title, description:desc, category:category,
-      price:price, downloads:0, uploadedBy:user?user.email:'admin', createdAt:new Date().toISOString()
+      id:         genId('ds'),
+      title:      title,
+      description:desc,
+      category:   category,
+      price:      price,
+      downloads:  0,
+      uploadedBy: user ? user.email : 'admin',
+      fileName:   fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0].name : '',
+      fileType:   fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0].type : '',
+      createdAt:  new Date().toISOString()
     });
     saveDatasets(datasets);
     form.reset();
-    showToast('"'+title+'" added to the archive successfully.');
+    showToast('"' + title + '" added to the archive successfully.');
   });
 }
 
