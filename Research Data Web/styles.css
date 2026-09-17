@@ -135,8 +135,23 @@ p { margin: 0 0 1em 0; max-width: 62ch; }
   color: var(--paper);
   text-decoration: none;
   letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
 }
 .brand span { color: var(--gold); }
+
+/* Logo image inside nav brand */
+.brand-logo {
+  height: 38px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  /* slight brightness bump so it reads on the dark header */
+  filter: brightness(1.08) saturate(1.1);
+}
+/* On admin pages the brand is the text version — keep it readable */
+.admin-brand-link { color: var(--paper); }
+.admin-brand-link span { color: var(--gold); }
 
 .nav-links {
   display: flex;
