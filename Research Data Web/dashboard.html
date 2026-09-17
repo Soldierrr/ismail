@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Profile — Ledger</title>
-<meta name="description" content="View your Ledger account, recent transfers and purchase history.">
+<meta name="description" content="View and edit your Ledger account, update your name, change your password and track recent transfers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
@@ -16,7 +16,7 @@
 <header class="site-header">
   <nav class="nav">
     <a href="index.html" class="brand">Ledger<span>.</span></a>
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="browse.html">Browse</a></li>
@@ -29,97 +29,154 @@
 
 <main id="main">
   <div id="dashboard-main">
-    <section style="padding-bottom: 0;">
+
+    <!-- Page header -->
+    <section style="padding-bottom:0;">
       <div class="wrap">
         <p class="eyebrow">Account</p>
-        <h1 style="font-size: clamp(1.6rem, 3vw, 2.2rem);">My Profile</h1>
+        <h1 style="font-size:clamp(1.6rem,3vw,2.2rem);">My Profile</h1>
+      </div>
+    </section>
+
+    <!-- Tab nav -->
+    <section style="padding-bottom:0; padding-top:0;">
+      <div class="wrap">
+        <div class="dash-tab-bar">
+          <button class="dash-tab-btn active" data-dtab="overview">Overview</button>
+          <button class="dash-tab-btn" data-dtab="edit-profile">Edit Profile</button>
+          <button class="dash-tab-btn" data-dtab="security">Security</button>
+          <button class="dash-tab-btn" data-dtab="transfers">Transfers</button>
+        </div>
       </div>
     </section>
 
     <section>
-      <div class="wrap dash-layout">
+      <div class="wrap">
 
-        <!-- Profile card (left) -->
-        <div class="dash-profile-card">
-          <div class="dash-avatar" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
-              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-            </svg>
-          </div>
+        <!-- ===== OVERVIEW TAB ===== -->
+        <div class="dash-tab-panel active" id="dtab-overview">
+          <div class="dash-layout">
 
-          <h2 class="dash-full-name" id="dash-name">—</h2>
-          <div class="dash-role-badge" id="dash-role">Researcher</div>
+            <!-- Profile card -->
+            <div class="dash-profile-card">
+              <div class="dash-avatar" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
+                  <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                </svg>
+              </div>
+              <h2 class="dash-full-name" id="dash-name">&#8212;</h2>
+              <div class="dash-role-badge" id="dash-role">Researcher</div>
+              <dl class="dash-meta">
+                <dt>Email</dt><dd id="dash-email">&#8212;</dd>
+                <dt>Member since</dt><dd id="dash-joined">&#8212;</dd>
+              </dl>
+              <div class="dash-actions">
+                <a href="admin-dashboard.html" id="dash-admin-link" class="btn btn-primary" style="display:none;text-align:center;">Admin Panel &rarr;</a>
+                <a href="browse.html" class="btn btn-secondary" style="text-align:center;">Browse datasets</a>
+                <a href="#" id="dash-logout" class="btn btn-outline-danger">&#x1F6AA; Log out</a>
+              </div>
+            </div>
 
-          <dl class="dash-meta">
-            <dt>Email</dt>
-            <dd id="dash-email">—</dd>
-            <dt>Member since</dt>
-            <dd id="dash-joined">—</dd>
-          </dl>
+            <!-- Stats -->
+            <div class="dash-content">
+              <div class="dash-stat-cards">
+                <div class="dash-stat-card">
+                  <div class="dash-stat-num" id="dash-total-purchases">0</div>
+                  <div class="dash-stat-label">Purchases</div>
+                </div>
+                <div class="dash-stat-card">
+                  <div class="dash-stat-num" id="dash-total-purchases-dl">0</div>
+                  <div class="dash-stat-label">Downloads</div>
+                </div>
+                <div class="dash-stat-card">
+                  <div class="dash-stat-num" id="dash-total-spent">&#x20A6;0</div>
+                  <div class="dash-stat-label">Total spent</div>
+                </div>
+              </div>
 
-          <div class="dash-actions">
-            <a href="admin-dashboard.html" id="dash-admin-link" class="btn btn-primary" style="display:none; text-align:center;">⚙ Admin Panel</a>
-            <a href="browse.html" class="btn btn-secondary" style="text-align:center;">Browse datasets</a>
-            <a href="#" id="dash-logout" class="btn btn-outline-danger">⏻ Log out</a>
+              <div class="dash-section">
+                <h3>Account information</h3>
+                <table class="detail-meta-table" style="max-width:480px;">
+                  <tr><td>Full name</td><td id="dash-name-detail">&#8212;</td></tr>
+                  <tr><td>Email</td><td id="dash-email-detail">&#8212;</td></tr>
+                  <tr><td>Role</td><td id="dash-role-detail">&#8212;</td></tr>
+                  <tr><td>Joined</td><td id="dash-joined-detail">&#8212;</td></tr>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Content (right) -->
-        <div class="dash-content">
-
-          <!-- Stat cards -->
-          <div class="dash-stat-cards">
-            <div class="dash-stat-card">
-              <div class="dash-stat-num" id="dash-total-purchases">0</div>
-              <div class="dash-stat-label">Datasets purchased</div>
-            </div>
-            <div class="dash-stat-card">
-              <div class="dash-stat-num" id="dash-total-purchases-dl">0</div>
-              <div class="dash-stat-label">Downloads used</div>
-            </div>
-            <div class="dash-stat-card">
-              <div class="dash-stat-num" id="dash-total-spent">₦0</div>
-              <div class="dash-stat-label">Total spent</div>
-            </div>
+        <!-- ===== EDIT PROFILE TAB ===== -->
+        <div class="dash-tab-panel" id="dtab-edit-profile">
+          <div class="form-panel" style="max-width:560px;">
+            <h2 style="font-size:1.2rem;margin-bottom:4px;">Personal Information</h2>
+            <p style="color:var(--ink-soft);font-size:0.88rem;margin-bottom:24px;">Update your name. Changes apply immediately on your next page load.</p>
+            <form id="user-profile-form" novalidate>
+              <div class="form-row-two">
+                <div class="field">
+                  <label for="up-firstname">First name</label>
+                  <input type="text" id="up-firstname" placeholder="e.g. Chukwuemeka" required>
+                  <div class="field-error">First name is required.</div>
+                </div>
+                <div class="field">
+                  <label for="up-lastname">Last name</label>
+                  <input type="text" id="up-lastname" placeholder="e.g. Obi" required>
+                  <div class="field-error">Last name is required.</div>
+                </div>
+              </div>
+              <div class="field">
+                <label for="up-othernames">Other names <span class="field-opt">(optional)</span></label>
+                <input type="text" id="up-othernames" placeholder="Middle name(s)">
+              </div>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </form>
           </div>
+        </div>
 
-          <!-- Recent transfers -->
-          <div class="dash-section">
-            <h3>Recent Transfers</h3>
-            <div id="transfers-empty" class="dash-empty-state" style="display:none;">
-              <p>You haven't made any purchases yet.</p>
-              <a href="browse.html" class="btn btn-primary btn-small">Browse the archive</a>
-            </div>
-            <div class="admin-table-wrap" id="transfers-table-wrap">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Dataset</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="transfers-tbody"></tbody>
-              </table>
-            </div>
+        <!-- ===== SECURITY TAB ===== -->
+        <div class="dash-tab-panel" id="dtab-security">
+          <div class="form-panel" style="max-width:520px;">
+            <h2 style="font-size:1.2rem;margin-bottom:4px;">Change Password</h2>
+            <p style="color:var(--ink-soft);font-size:0.88rem;margin-bottom:24px;">Use a strong password that is at least 8 characters long and not used elsewhere.</p>
+            <form id="user-pw-form" novalidate>
+              <div class="field">
+                <label for="up-current-pw">Current password</label>
+                <input type="password" id="up-current-pw" placeholder="Your current password" autocomplete="current-password" required>
+              </div>
+              <div class="field">
+                <label for="up-new-pw">New password</label>
+                <input type="password" id="up-new-pw" placeholder="Min. 8 characters" autocomplete="new-password" required>
+              </div>
+              <div class="field">
+                <label for="up-confirm-pw">Confirm new password</label>
+                <input type="password" id="up-confirm-pw" placeholder="Repeat new password" autocomplete="new-password" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Update password</button>
+            </form>
           </div>
+        </div>
 
-          <!-- Account info -->
-          <div class="dash-section">
-            <h3>Account information</h3>
-            <table class="detail-meta-table" style="max-width: 480px;">
-              <tr><td>Full name</td><td id="dash-name-detail">—</td></tr>
-              <tr><td>Email</td><td id="dash-email-detail">—</td></tr>
-              <tr><td>Role</td><td id="dash-role-detail">—</td></tr>
-              <tr><td>Joined</td><td id="dash-joined-detail">—</td></tr>
+        <!-- ===== TRANSFERS TAB ===== -->
+        <div class="dash-tab-panel" id="dtab-transfers">
+          <div id="transfers-empty" class="dash-empty-state" style="display:none;">
+            <p>You have not made any purchases yet.</p>
+            <a href="browse.html" class="btn btn-primary btn-small">Browse the archive</a>
+          </div>
+          <div class="admin-table-wrap" id="transfers-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Date</th><th>Dataset</th><th>Amount</th><th>Status</th></tr>
+              </thead>
+              <tbody id="transfers-tbody"></tbody>
             </table>
           </div>
-
         </div>
-      </div>
+
+      </div><!-- /wrap -->
     </section>
-  </div>
+
+  </div><!-- /dashboard-main -->
 </main>
 
 <footer class="site-footer">
@@ -138,10 +195,23 @@
         </div>
       </div>
     </div>
-    <div class="footer-bottom">© 2026 Ledger. Research data, sold directly by the people who collected it.</div>
+    <div class="footer-bottom">&copy; 2026 Ledger. Research data, sold directly by the people who collected it.</div>
   </div>
 </footer>
 
 <script src="script.js"></script>
+<script>
+// Dashboard tab switching
+document.querySelectorAll('.dash-tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var target = btn.getAttribute('data-dtab');
+    document.querySelectorAll('.dash-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.dash-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    var panel = document.getElementById('dtab-' + target);
+    if (panel) panel.classList.add('active');
+  });
+});
+</script>
 </body>
 </html>

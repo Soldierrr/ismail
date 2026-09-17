@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content — Ledger Admin</title>
+<meta name="description" content="Edit the public-facing About page and Contact information for Ledger.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem;color:var(--paper);">Ledger<span>.</span></a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Ledger<span>.</span></a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <!-- rebuilt dynamically by script.js initAdminSidebar() -->
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">&#x1F6AA; Log out</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-header">
+      <p class="eyebrow" style="margin-bottom:4px;">Site Management</p>
+      <h1>Content</h1>
+    </div>
+
+    <div class="admin-body" style="display:flex; flex-direction:column; gap:28px; max-width:720px;">
+
+      <p style="color:var(--ink-soft);font-size:0.95rem;margin:0;">
+        Edit the content shown on the public <strong>About</strong> and <strong>Contact</strong> pages. All changes take effect immediately — no rebuild required.
+      </p>
+
+      <!-- About page editor -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.05rem;margin-bottom:4px;">About Page</h2>
+        <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">Edits the researcher profile shown on <a href="about.html" target="_blank">about.html</a>.</p>
+        <form id="admin-about-form" novalidate>
+          <div class="form-row-two">
+            <div class="field">
+              <label for="sc-researcher-name">Researcher name</label>
+              <input type="text" id="sc-researcher-name" placeholder="e.g. Dr. A. Kenton">
+            </div>
+            <div class="field">
+              <label for="sc-initials">Initials (avatar)</label>
+              <input type="text" id="sc-initials" placeholder="e.g. AK" maxlength="3">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sc-department">Department / Affiliation</label>
+            <input type="text" id="sc-department" placeholder="e.g. Department of Accounting, University of Lagos">
+          </div>
+          <div class="field">
+            <label for="sc-bio1">Bio — paragraph 1</label>
+            <textarea id="sc-bio1" rows="3" placeholder="First paragraph…"></textarea>
+          </div>
+          <div class="field">
+            <label for="sc-bio2">Bio — paragraph 2</label>
+            <textarea id="sc-bio2" rows="3" placeholder="Second paragraph…"></textarea>
+          </div>
+          <div class="field">
+            <label for="sc-credentials">Credentials <span class="field-opt">(one per line)</span></label>
+            <textarea id="sc-credentials" rows="5" placeholder="PhD in Accounting, University of Lagos&#10;Associate Professor, Department of Accounting"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save About page</button>
+        </form>
+      </div>
+
+      <!-- Contact info editor -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.05rem;margin-bottom:4px;">Contact Information</h2>
+        <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">Updates the email and phone shown on <a href="contact.html" target="_blank">contact.html</a>.</p>
+        <form id="admin-contact-form" novalidate>
+          <div class="field">
+            <label for="sc-email">Contact email</label>
+            <input type="email" id="sc-email" placeholder="e.g. contact@ledger.ng">
+          </div>
+          <div class="field">
+            <label for="sc-phone">Contact phone (Nigerian format)</label>
+            <input type="tel" id="sc-phone" placeholder="e.g. +234 801 234 5678">
+          </div>
+          <button type="submit" class="btn btn-primary">Save contact info</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

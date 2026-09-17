@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
       initAdminPayments();
       initAdminTickets();
       initAdminProfile();
+      initAdminContent();
     }
   } else {
     initNavToggle();
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initTicketForm();
     initSearchFilter();
     initUserDashboard();
+    initProfileEditForms();
   }
 });
 
@@ -147,7 +149,7 @@ function initNavToggle() {
 /* ============================================================
    PUBLIC NAV — AUTH STATE (guest / user)
    Guest:  Log in link visible, no user widget
-   User:   Log in link hidden, name + role pill + logout icon appended
+   User:   Log in link hidden, stacked name + role (not linked) + door logout
    ============================================================ */
 function initNavAuth() {
   var user = getCurrentUser();
@@ -158,18 +160,19 @@ function initNavAuth() {
   var loginAnchor = navLinks.querySelector('a[href="login.html"]');
 
   if (user) {
-    // Hide Log in li
     if (loginAnchor) loginAnchor.parentElement.style.display = 'none';
 
-    // Append user widget to nav
+    var fullName = escHtml(user.firstName + ' ' + user.lastName);
+    var roleName = user.isAdmin ? 'Admin' : 'Researcher';
+
     var widget = document.createElement('div');
     widget.className = 'nav-user-widget';
     widget.innerHTML =
-      '<a href="dashboard.html" class="nav-user-info" title="My Profile">' +
-        '<span class="nav-user-name">' + escHtml(user.firstName) + '</span>' +
-        '<span class="nav-role-pill">' + (user.isAdmin ? 'Admin' : 'User') + '</span>' +
-      '</a>' +
-      '<button id="nav-logout-btn" class="nav-logout-icon" title="Log out" aria-label="Log out">&#x23FB;</button>';
+      '<div class="nav-user-info">' +
+        '<div class="nav-user-name">' + fullName + '</div>' +
+        '<div class="nav-user-role">' + roleName + '</div>' +
+      '</div>' +
+      '<button id="nav-logout-btn" class="nav-logout-icon" title="Log out" aria-label="Log out">&#x1F6AA;</button>';
     nav.appendChild(widget);
 
     document.getElementById('nav-logout-btn').addEventListener('click', function() {
@@ -205,13 +208,15 @@ function initAdminPageGuard() {
 }
 
 /* ============================================================
-   ADMIN SIDEBAR
+   ADMIN SIDEBAR — built dynamically (plain text labels, no emoji)
    ============================================================ */
 function initAdminSidebar() {
-  // Mobile toggle
-  var toggle  = document.getElementById('admin-sidebar-toggle');
+  var pg      = currentPage();
   var sidebar = document.getElementById('admin-sidebar');
   var overlay = document.getElementById('admin-overlay');
+  var toggle  = document.getElementById('admin-sidebar-toggle');
+
+  // Mobile toggle
   if (toggle && sidebar) {
     toggle.addEventListener('click', function() {
       sidebar.classList.toggle('open');
@@ -225,41 +230,60 @@ function initAdminSidebar() {
     });
   }
 
-  // Populate sidebar user info
+  // Rebuild nav links from a single source of truth — plain text, no emoji
+  var sidebarNav = document.querySelector('.admin-sidebar-nav');
+  if (sidebarNav) {
+    var navItems = [
+      { href: 'admin-dashboard.html', label: 'Dashboard' },
+      { href: 'admin-users.html',     label: 'Users' },
+      { href: 'admin-papers.html',    label: 'Papers' },
+      { href: 'admin-upload.html',    label: 'Upload' },
+      { href: 'admin-payments.html',  label: 'Payments' },
+      { href: 'admin-tickets.html',   label: 'Support Tickets' },
+      { href: 'admin-content.html',   label: 'Content' },
+      { href: 'admin-profile.html',   label: 'My Profile' }
+    ];
+    sidebarNav.innerHTML = '';
+    navItems.forEach(function(item) {
+      var a = document.createElement('a');
+      a.href = item.href;
+      a.className = 'admin-nav-link' + (item.href === pg ? ' active' : '');
+      a.textContent = item.label;
+      sidebarNav.appendChild(a);
+    });
+
+    // Open ticket badge
+    var openCount = getTickets().filter(function(t){ return t.status==='Open'; }).length;
+    if (openCount > 0) {
+      var ticketLink = sidebarNav.querySelector('a[href="admin-tickets.html"]');
+      if (ticketLink) {
+        var badge = document.createElement('span');
+        badge.className = 'nav-badge';
+        badge.textContent = String(openCount);
+        ticketLink.appendChild(badge);
+      }
+    }
+  }
+
+  // Sidebar user info
   var user = getCurrentUser();
   if (user) {
     var infoEl = document.getElementById('sidebar-user-info');
     if (infoEl) {
       infoEl.innerHTML =
-        '<div class="sidebar-user-name">' + escHtml(user.firstName+' '+user.lastName) + '</div>' +
+        '<div class="sidebar-user-name">' + escHtml(user.firstName + ' ' + user.lastName) + '</div>' +
         '<div class="sidebar-user-email">' + escHtml(user.email) + '</div>';
     }
   }
 
-  // Logout
+  // Logout — door emoji
   var logoutBtn = document.getElementById('admin-logout-btn');
   if (logoutBtn) {
+    logoutBtn.innerHTML = '&#x1F6AA; Log out';
     logoutBtn.addEventListener('click', function() {
       clearCurrentUser();
       window.location.href = 'index.html';
     });
-  }
-
-  // Highlight active link
-  var pg = currentPage();
-  document.querySelectorAll('.admin-nav-link').forEach(function(link) {
-    if (link.getAttribute('href') === pg) link.classList.add('active');
-  });
-
-  // Open ticket badge on sidebar
-  var openCount = getTickets().filter(function(t){ return t.status==='Open'; }).length;
-  if (openCount > 0) {
-    var ticketLink = document.querySelector('.admin-nav-link[href="admin-tickets.html"]');
-    if (ticketLink) {
-      var badge = document.createElement('span');
-      badge.className = 'nav-badge'; badge.textContent = String(openCount);
-      ticketLink.appendChild(badge);
-    }
   }
 }
 
@@ -771,64 +795,93 @@ function renderAdminTickets() {
 }
 
 /* ============================================================
-   ADMIN — PROFILE + SITE CONTENT EDITOR
+   ADMIN — PROFILE (personal info + password change only)
    ============================================================ */
 function initAdminProfile() {
   var profileForm = document.getElementById('admin-profile-form'); if (!profileForm) return;
   var user = getCurrentUser(); if (!user) return;
 
-  // Pre-fill personal info
-  var fields = {
-    'ap-firstname': user.firstName,
-    'ap-lastname':  user.lastName,
-    'ap-email':     user.email
-  };
-  Object.keys(fields).forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.value = fields[id];
-  });
+  // Pre-fill
+  setVal('ap-firstname',  user.firstName);
+  setVal('ap-lastname',   user.lastName);
+  setVal('ap-othernames', user.otherNames || '');
+  setVal('ap-email',      user.email);
 
-  // Pre-fill site content
-  var c = getSiteContent();
-  if (c) {
-    if (c.about) {
-      var aboutFields = {
-        'sc-researcher-name': c.about.researcherName||'',
-        'sc-department':      c.about.department||'',
-        'sc-initials':        c.about.initials||'',
-        'sc-bio1':            c.about.bio1||'',
-        'sc-bio2':            c.about.bio2||'',
-        'sc-credentials':     (c.about.credentials||[]).join('\n')
-      };
-      Object.keys(aboutFields).forEach(function(id) {
-        var el = document.getElementById(id); if (el) el.value = aboutFields[id];
-      });
-    }
-    if (c.contact) {
-      var el; 
-      el = document.getElementById('sc-email'); if (el) el.value = c.contact.email||'';
-      el = document.getElementById('sc-phone'); if (el) el.value = c.contact.phone||'';
-    }
-  }
+  // Display info
+  setText('ap-display-name',  user.firstName + ' ' + user.lastName);
+  setText('ap-display-email', user.email);
+  setText('ap-display-role',  user.isAdmin ? 'Administrator' : 'Researcher');
+  setText('ap-display-joined', new Date(user.createdAt).toLocaleDateString('en-NG', {year:'numeric',month:'long',day:'numeric'}));
 
   // Save personal info
   profileForm.addEventListener('submit', function(e) {
     e.preventDefault();
     var users = getUsers();
-    var idx   = users.findIndex(function(u){ return u.id===user.id; }); if (idx===-1) return;
-    var fn = val('ap-firstname'); var ln = val('ap-lastname');
-    if (fn) users[idx].firstName = fn;
-    if (ln) users[idx].lastName  = ln;
+    var idx = users.findIndex(function(u){ return u.id === user.id; }); if (idx === -1) return;
+    var fn = val('ap-firstname'); var ln = val('ap-lastname'); var on = val('ap-othernames');
+    if (fn) users[idx].firstName  = fn;
+    if (ln) users[idx].lastName   = ln;
+    users[idx].otherNames = on;
     saveUsers(users);
     setCurrentUser(users[idx]);
+    user = users[idx];
+    setText('ap-display-name', users[idx].firstName + ' ' + users[idx].lastName);
     showToast('Profile updated successfully.');
   });
 
-  // Save about content
-  var aboutForm = document.getElementById('admin-about-form');
+  // Password change
+  var pwForm = document.getElementById('admin-pw-form');
+  if (pwForm) {
+    pwForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var u = getCurrentUser(); if (!u) return;
+      var curPw = val('ap-current-pw');
+      var newPw = val('ap-new-pw');
+      var conPw = val('ap-confirm-pw');
+      if (!curPw || !newPw || !conPw) { showToast('Please fill in all password fields.'); return; }
+      if (u.passwordHash !== hashPw(curPw))  { showToast('Current password is incorrect.'); return; }
+      if (newPw.length < 8) { showToast('New password must be at least 8 characters.'); return; }
+      if (newPw !== conPw)  { showToast('New passwords do not match.'); return; }
+      var users = getUsers();
+      var idx   = users.findIndex(function(u2){ return u2.id === u.id; }); if (idx === -1) return;
+      users[idx].passwordHash = hashPw(newPw);
+      saveUsers(users);
+      setCurrentUser(users[idx]);
+      pwForm.reset();
+      showToast('Password changed successfully.');
+    });
+  }
+}
+
+/* ============================================================
+   ADMIN — CONTENT EDITOR (About + Contact pages)
+   ============================================================ */
+function initAdminContent() {
+  var aboutForm   = document.getElementById('admin-about-form');
+  var contactForm = document.getElementById('admin-contact-form');
+  if (!aboutForm && !contactForm) return;
+
+  var c = getSiteContent();
+  if (c) {
+    if (c.about) {
+      setVal('sc-researcher-name', c.about.researcherName || '');
+      setVal('sc-department',      c.about.department     || '');
+      setVal('sc-initials',        c.about.initials       || '');
+      setVal('sc-bio1',            c.about.bio1           || '');
+      setVal('sc-bio2',            c.about.bio2           || '');
+      setVal('sc-credentials',     (c.about.credentials   || []).join('\n'));
+    }
+    if (c.contact) {
+      setVal('sc-email', c.contact.email || '');
+      setVal('sc-phone', c.contact.phone || '');
+    }
+  }
+
   if (aboutForm) {
     aboutForm.addEventListener('submit', function(e) {
       e.preventDefault();
       var c = getSiteContent() || { about:{}, contact:{} };
+      if (!c.about) c.about = {};
       c.about.researcherName = val('sc-researcher-name');
       c.about.department     = val('sc-department');
       c.about.initials       = val('sc-initials');
@@ -836,20 +889,81 @@ function initAdminProfile() {
       c.about.bio2           = val('sc-bio2');
       c.about.credentials    = val('sc-credentials').split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
       saveSiteContent(c);
-      showToast('About page content saved successfully.');
+      showToast('About page saved. Changes are now live.');
     });
   }
 
-  // Save contact info
-  var contactForm = document.getElementById('admin-contact-form');
   if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
       e.preventDefault();
       var c = getSiteContent() || { about:{}, contact:{} };
+      if (!c.contact) c.contact = {};
       c.contact.email = val('sc-email');
       c.contact.phone = val('sc-phone');
       saveSiteContent(c);
-      showToast('Contact information saved. Changes will appear on the Contact page.');
+      showToast('Contact info saved. Changes are now live.');
     });
   }
 }
+
+/* ============================================================
+   USER — PROFILE EDIT (name + password change in dashboard)
+   ============================================================ */
+function initProfileEditForms() {
+  if (currentPage() !== 'dashboard.html') return;
+  var user = getCurrentUser(); if (!user) return;
+
+  // Pre-fill profile form
+  setVal('up-firstname',  user.firstName);
+  setVal('up-lastname',   user.lastName);
+  setVal('up-othernames', user.otherNames || '');
+
+  var infoForm = document.getElementById('user-profile-form');
+  if (infoForm) {
+    infoForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var fn = val('up-firstname'); var ln = val('up-lastname'); var on = val('up-othernames');
+      if (!fn || !ln) { showToast('First and last name are required.'); return; }
+      var users = getUsers();
+      var idx   = users.findIndex(function(u){ return u.id === user.id; }); if (idx === -1) return;
+      users[idx].firstName  = fn;
+      users[idx].lastName   = ln;
+      users[idx].otherNames = on;
+      saveUsers(users);
+      setCurrentUser(users[idx]);
+      user = users[idx];
+      var full = fn + ' ' + ln + (on ? ' ' + on : '');
+      setText('dash-name',        full);
+      setText('dash-name-detail', full);
+      showToast('Profile updated.');
+    });
+  }
+
+  // Password change
+  var pwForm = document.getElementById('user-pw-form');
+  if (pwForm) {
+    pwForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var u = getCurrentUser(); if (!u) return;
+      var curPw = val('up-current-pw');
+      var newPw = val('up-new-pw');
+      var conPw = val('up-confirm-pw');
+      if (!curPw || !newPw || !conPw) { showToast('Please fill in all password fields.'); return; }
+      if (u.passwordHash !== hashPw(curPw))  { showToast('Current password is incorrect.'); return; }
+      if (newPw.length < 8) { showToast('New password must be at least 8 characters.'); return; }
+      if (newPw !== conPw)  { showToast('New passwords do not match.'); return; }
+      var users = getUsers();
+      var idx   = users.findIndex(function(u2){ return u2.id === u.id; }); if (idx === -1) return;
+      users[idx].passwordHash = hashPw(newPw);
+      saveUsers(users);
+      setCurrentUser(users[idx]);
+      pwForm.reset();
+      showToast('Password changed successfully.');
+    });
+  }
+}
+
+/* ============================================================
+   UTILITY — set a field value by id
+   ============================================================ */
+function setVal(id, v) { var el = document.getElementById(id); if (el) el.value = v; }
