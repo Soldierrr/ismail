@@ -1474,3 +1474,227 @@ textarea { resize: vertical; min-height: 100px; }
 .detail-meta-table td { padding: 9px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .detail-meta-table td:first-child { color: var(--ink-soft); width: 120px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; padding-right: 16px; }
 .detail-meta-table tr:last-child td { border-bottom: none; }
+
+/* ============================================================
+   ANIMATIONS & MICRO-INTERACTIONS
+   ============================================================ */
+
+/* ------ Keyframes ------ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  from { background-position: -600px 0; }
+  to   { background-position: 600px 0; }
+}
+@keyframes rippleOut {
+  from { transform: scale(0); opacity: 0.4; }
+  to   { transform: scale(3.5); opacity: 0; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,138,62,0); }
+  50%       { box-shadow: 0 0 0 6px rgba(201,138,62,0.18); }
+}
+
+/* ------ Page entrance ------ */
+body {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* ------ Section reveal (scroll-driven via JS .is-visible class) ------ */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+              transform 0.55s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s cubic-bezier(0.22,1,0.36,1),
+              transform 0.45s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0.05s; opacity:1; transform:none; }
+.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 0.12s; opacity:1; transform:none; }
+.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 0.19s; opacity:1; transform:none; }
+.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 0.26s; opacity:1; transform:none; }
+.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 0.33s; opacity:1; transform:none; }
+.reveal-stagger.is-visible > *:nth-child(6) { transition-delay: 0.40s; opacity:1; transform:none; }
+
+/* ------ Buttons — lifted hover + press ------ */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+              color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+}
+.btn:hover  { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.btn:active { transform: translateY(0px);  box-shadow: none; }
+
+/* Ripple element (injected by JS) */
+.btn .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.32);
+  width: 8px; height: 8px;
+  pointer-events: none;
+  animation: rippleOut 0.52s ease-out forwards;
+}
+
+/* ------ Nav links — underline slide ------ */
+.nav-links a {
+  position: relative;
+  transition: opacity 0.15s, color 0.15s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 2px;
+  background: var(--gold);
+  transition: width 0.22s cubic-bezier(0.22,1,0.36,1);
+}
+.nav-links a:hover::after,
+.nav-links a.active::after { width: 100%; }
+
+/* ------ Cards — lift on hover ------ */
+.ledger-card,
+.contact-card,
+.admin-panel,
+.admin-stat-card,
+.dash-stat-card,
+.dash-profile-card,
+.form-panel {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.ledger-card:hover,
+.contact-card:hover  { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(31,58,61,0.1); }
+.admin-stat-card:hover,
+.dash-stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(31,58,61,0.09); border-color: var(--gold); }
+
+/* ------ Form fields — smooth focus ring ------ */
+input, textarea, select {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--teal) !important;
+  box-shadow: 0 0 0 3px rgba(31,58,61,0.12);
+  background: var(--white) !important;
+}
+
+/* ------ Stat counter animation (class added by JS) ------ */
+.stat-animated {
+  animation: countUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ------ Admin sidebar nav links ------ */
+.admin-nav-link {
+  transition: background 0.15s ease, color 0.15s ease,
+              border-color 0.15s ease, padding-left 0.15s ease;
+}
+.admin-nav-link:hover { padding-left: 24px; }
+.admin-nav-link.active { padding-left: 24px; }
+
+/* ------ FAQ accordion ------ */
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.22,1,0.36,1),
+              padding 0.25s ease, opacity 0.25s ease;
+  opacity: 0;
+}
+.faq-item.open .faq-a {
+  max-height: 300px;
+  opacity: 1;
+  padding-bottom: 16px;
+}
+.faq-icon {
+  display: inline-block;
+  transition: transform 0.28s cubic-bezier(0.22,1,0.36,1);
+  float: right;
+}
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+
+/* ------ Toast —smooth slide up ------ */
+.toast {
+  transition: opacity 0.28s cubic-bezier(0.22,1,0.36,1),
+              transform 0.28s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* ------ Modal entrance ------ */
+.ticket-modal-overlay { animation: fadeIn 0.2s ease both; }
+.ticket-modal-box     { animation: scaleIn 0.25s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ------ Dashboard tab panel transition ------ */
+.dash-tab-panel {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.dash-tab-panel.active {
+  animation: fadeUp 0.28s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ------ Skeleton loader (for tables while data loads) ------ */
+.skeleton {
+  background: linear-gradient(90deg, var(--paper-dim) 25%, var(--rule) 50%, var(--paper-dim) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* ------ Nav brand hover ------ */
+.brand {
+  transition: opacity 0.18s ease, letter-spacing 0.18s ease;
+}
+.brand:hover { opacity: 0.85; }
+
+/* ------ Header scroll shadow ------ */
+.site-header {
+  transition: box-shadow 0.2s ease;
+}
+.site-header.scrolled {
+  box-shadow: 0 2px 20px rgba(0,0,0,0.18);
+}
+
+/* ------ Table row hover ------ */
+.admin-table tbody tr {
+  transition: background 0.12s ease;
+}
+
+/* ------ Status badge pulse for open tickets ------ */
+.status-open {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+/* ------ Reduced-motion safety ------ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
