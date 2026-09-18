@@ -153,6 +153,17 @@ function seedAdmin() {
     });
     saveUsers(users);
   }
+
+  // Migrate any datasets uploaded by the old admin to the new admin
+  var datasets = getDatasets();
+  var migrated = false;
+  datasets.forEach(function(d) {
+    if (d.uploadedBy === 'admin@ledger.com') {
+      d.uploadedBy = 'admin@researchhub.ng';
+      migrated = true;
+    }
+  });
+  if (migrated) saveDatasets(datasets);
 }
 
 function seedSiteContent() {
@@ -229,14 +240,15 @@ function initNavAuth() {
 
     var fullName = escHtml(user.firstName + ' ' + user.lastName);
     var roleName = user.isAdmin ? 'Admin' : 'Researcher';
+    var dashLink = user.isAdmin ? 'admin-dashboard.html' : 'dashboard.html';
 
     var widget = document.createElement('div');
     widget.className = 'nav-user-widget';
     widget.innerHTML =
-      '<div class="nav-user-info">' +
+      '<a href="' + dashLink + '" class="nav-user-info" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:flex-start;">' +
         '<div class="nav-user-name">' + fullName + '</div>' +
         '<div class="nav-user-role">' + roleName + '</div>' +
-      '</div>' +
+      '</a>' +
       '<button id="nav-logout-btn" class="nav-logout-icon" title="Log out" aria-label="Log out">' + LOGOUT_SVG + '</button>';
     nav.appendChild(widget);
 
