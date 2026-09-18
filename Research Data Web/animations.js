@@ -1,5 +1,5 @@
-/**
- * Ledger — Animations & Micro-interactions
+﻿/**
+ * Research Hub — Animations & Micro-interactions
  * Scroll-reveal, stat counters, ripple buttons, header shadow, page transitions
  */
 (function () {

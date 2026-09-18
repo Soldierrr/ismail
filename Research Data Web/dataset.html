@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
@@ -7,8 +7,8 @@
 <meta name="theme-color" content="#16292B">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SME Tax Compliance Panel — Ledger</title>
-<meta name="description" content="Buy the SME Tax Compliance Panel, 2015–2024. Firm-level tax filing data for 4,200 Nigerian SMEs. Includes CSV, Stata and codebook.">
+<title>Dataset — Research Hub</title>
+<meta name="description" content="View and download research datasets on Research Hub.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
@@ -18,12 +18,8 @@
 <a href="#main" class="skip-link">Skip to content</a>
 
 <header class="site-header">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
-<meta name="theme-color" content="#16292B">
   <nav class="nav">
-    <a href="index.html" class="brand" aria-label="Ledger â€” Research Data Archive"><img src="logo.png" alt="Ledger" class="brand-logo"></a>
+    <a href="index.html" class="brand" aria-label="Research Hub home"><img src="logo.png" alt="Research Hub" class="brand-logo"></a>
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
@@ -38,38 +34,41 @@
 <main id="main">
   <section style="padding-bottom: 0;">
     <div class="wrap">
-      <p class="eyebrow"><a href="browse.html" style="text-decoration:underline;">Browse</a> / Taxation</p>
+      <p class="eyebrow">
+        <a href="browse.html" style="text-decoration:underline;">Browse</a>
+        / <span id="ds-category-crumb">Dataset</span>
+      </p>
     </div>
   </section>
 
   <section>
     <div class="wrap detail-grid">
       <div>
-        <h1 style="font-size: clamp(1.8rem, 3vw, 2.3rem);">SME Tax Compliance Panel, 2015–2024</h1>
-        <div class="data-tags" style="margin-bottom: 20px;">
-          <span class="tag">Taxation</span><span class="tag">Panel data</span><span class="tag">Nigeria</span>
-        </div>
-        <p>This panel dataset tracks tax filing behaviour, compliance costs and audit exposure for 4,200 registered small and medium enterprises between 2015 and 2024. It was compiled from anonymised tax authority records and a supplementary annual survey of firm owners.</p>
-        <p>Variables include annual turnover, filing frequency, penalty history, sector classification and self-reported compliance burden. The dataset is fully anonymised and cleared for academic use.</p>
+        <h1 id="ds-title" style="font-size: clamp(1.8rem, 3vw, 2.3rem);">Loading…</h1>
+
+        <div class="data-tags" id="ds-tags" style="margin-bottom: 20px;"></div>
+
+        <p id="ds-description"></p>
 
         <h3 style="margin-top: 32px;">Dataset details</h3>
         <table class="detail-meta-table">
-          <tr><td>Format</td><td>CSV, with a Stata .dta version included</td></tr>
-          <tr><td>Observations</td><td>4,200 firms × 10 years (panel)</td></tr>
-          <tr><td>Variables</td><td>38</td></tr>
-          <tr><td>Coverage</td><td>Nigeria, national sample</td></tr>
-          <tr><td>Documentation</td><td>Codebook and variable definitions included</td></tr>
-          <tr><td>Uploaded by</td><td>Dr. A. Kenton, Dept. of Accounting</td></tr>
+          <tr><td>Category</td><td id="ds-category">—</td></tr>
+          <tr><td>Uploaded by</td><td id="ds-uploader">—</td></tr>
+          <tr><td>Date added</td><td id="ds-date">—</td></tr>
         </table>
 
-        <a href="#" class="sample-link">Download a sample of the first 50 rows (CSV, 40KB)</a>
+        <!-- Full file download link (shown when file was uploaded and stored) -->
+        <a id="ds-file-link" href="#" class="sample-link" style="display:none; margin-top: 20px; display:inline-block;"></a>
       </div>
 
       <aside class="buy-panel">
-        <div class="buy-price">₦4,500</div>
+        <div class="buy-price" id="ds-buy-price">—</div>
         <div class="buy-sub">One-time payment · instant download · academic-use licence</div>
-        <button class="btn btn-primary btn-block" data-buy="SME Tax Compliance Panel, 2015–2024">Buy this dataset</button>
-        <p class="buy-dl-count"><span class="dl-icon">⬇</span> 312 researchers have downloaded this dataset.</p>
+        <button id="ds-buy-btn" class="btn btn-primary btn-block" data-buy="" data-dsid="">Buy this dataset</button>
+        <p class="buy-dl-count">
+          <span class="dl-icon">⬇</span>
+          <span id="ds-download-count">0</span> researchers have downloaded this dataset.
+        </p>
       </aside>
     </div>
   </section>
@@ -78,7 +77,7 @@
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
-      <a href="index.html" class="brand" aria-label="Ledger home"><img src="logo.png" alt="Ledger" class="brand-logo" style="height:30px;"></a>
+      <a href="index.html" class="brand" aria-label="Research Hub home"><img src="logo.png" alt="Research Hub" class="brand-logo" style="height:30px;"></a>
       <div class="footer-cols">
         <div class="footer-col">
           <h5>Explore</h5>
@@ -92,7 +91,7 @@
         </div>
       </div>
     </div>
-    <div class="footer-bottom">© 2026 Ledger. Research data, sold directly by the people who collected it.</div>
+    <div class="footer-bottom">© 2026 Research Hub. Research data, sold directly by the people who collected it.</div>
   </div>
 </footer>
 

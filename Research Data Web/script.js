@@ -1,4 +1,4 @@
-// Ledger — Research Data Marketplace
+// Research Hub — Research Data Marketplace
 // All data stored in localStorage (demo/template — NOT for production)
 
 var USERS_KEY    = 'ledger_users';
@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', function () {
     initSearchFilter();
     initUserDashboard();
     initProfileEditForms();
+    initHomePage();
+    initDatasetPage();
   }
 });
 
@@ -84,14 +86,22 @@ function setText(id, text) { var el=document.getElementById(id); if(el) el.textC
 function val(id) { var el=document.getElementById(id); return el ? el.value.trim() : ''; }
 
 /* ============================================================
+   URL PARAM HELPER
+   ============================================================ */
+function getUrlParam(name) {
+  var params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+/* ============================================================
    SEEDING
    ============================================================ */
 function seedAdmin() {
   var users = getUsers();
-  if (!users.some(function(u){ return u.email==='admin@ledger.ng'; })) {
+  if (!users.some(function(u){ return u.email==='admin@researchhub.ng'; })) {
     users.push({
-      id:'admin-seed-001', firstName:'Ledger', lastName:'Admin', otherNames:'',
-      email:'admin@ledger.ng', passwordHash:hashPw('Admin@1234'),
+      id:'admin-seed-001', firstName:'Research Hub', lastName:'Admin', otherNames:'',
+      email:'admin@researchhub.ng', passwordHash:hashPw('Admin@1234'),
       isAdmin:true, createdAt:new Date().toISOString()
     });
     saveUsers(users);
@@ -104,8 +114,8 @@ function seedSiteContent() {
       about: {
         researcherName:'Dr. A. Kenton', department:'Department of Accounting',
         initials:'AK',
-        bio1:'Dr. Kenton has spent two decades researching tax compliance, audit practice and corporate governance across emerging markets. Ledger was built to make that fieldwork — and the datasets built by colleagues working in the same space — available directly to the researchers who need it, without the delay of formal publication.',
-        bio2:'Every dataset on Ledger has been cleaned, documented and anonymised to the same standard used in Dr. Kenton\'s own published work, so you can build on it with confidence.',
+        bio1:'Dr. Kenton has spent two decades researching tax compliance, audit practice and corporate governance across emerging markets. Research Hub was built to make that fieldwork — and the datasets built by colleagues working in the same space — available directly to the researchers who need it, without the delay of formal publication.',
+        bio2:'Every dataset on Research Hub has been cleaned, documented and anonymised to the same standard used in Dr. Kenton\'s own published work, so you can build on it with confidence.',
         credentials:[
           'PhD in Accounting, University of Lagos',
           'Associate Professor, Department of Accounting',
@@ -113,7 +123,7 @@ function seedSiteContent() {
           'Consultant to national tax authorities on SME compliance'
         ]
       },
-      contact:{ email:'contact@ledger.ng', phone:'+234 801 234 5678' }
+      contact:{ email:'contact@researchhub.ng', phone:'+234 801 234 5678' }
     });
   }
 }
@@ -329,15 +339,33 @@ function initTabs() {
 }
 
 /* ============================================================
-   BUY BUTTONS
+   BUY BUTTONS — with download count increment
    ============================================================ */
 function initBuyButtons() {
   document.querySelectorAll('[data-buy]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
-      if (!getCurrentUser()) { showToast('Please log in to purchase a dataset.'); return; }
-      var name = btn.getAttribute('data-buy');
-      showToast('Added "'+name+'" to your order. A secure payment step would appear here once the gateway is connected.');
+      if (!getCurrentUser()) {
+        showToast('Please log in to purchase a dataset.');
+        return;
+      }
+      var dsid = btn.getAttribute('data-dsid') || '';
+      var name = btn.getAttribute('data-buy') || '';
+
+      // Increment downloads on the dataset record
+      if (dsid) {
+        var datasets = getDatasets();
+        var ds = datasets.find(function(d){ return d.id === dsid; });
+        if (ds) {
+          ds.downloads = (ds.downloads || 0) + 1;
+          saveDatasets(datasets);
+          // Update displayed count on page
+          var countEl = document.getElementById('ds-download-count');
+          if (countEl) countEl.textContent = ds.downloads;
+        }
+      }
+
+      showToast('Added "' + name + '" to your order. A secure payment step would appear here once the gateway is connected.');
     });
   });
 }
@@ -363,7 +391,8 @@ function initAuthForms() {
       setCurrentUser(user);
       showToast('Welcome back, '+user.firstName+'!');
       setTimeout(function(){
-        window.location.href = user.isAdmin ? 'admin-dashboard.html' : 'dashboard.html';
+        // Admin goes to admin dashboard; regular users go to home page
+        window.location.href = user.isAdmin ? 'admin-dashboard.html' : 'index.html';
       }, 1200);
     });
   }
@@ -400,7 +429,8 @@ function initAuthForms() {
       saveUsers(users);
       setCurrentUser(newUser);
       showToast('Account created! Welcome, '+firstName+'.');
-      setTimeout(function(){ window.location.href='dashboard.html'; }, 1200);
+      // New users land on the home page
+      setTimeout(function(){ window.location.href='index.html'; }, 1200);
     });
   }
 }
@@ -494,60 +524,139 @@ function initTicketForm() {
 }
 
 /* ============================================================
-   BROWSE — live search + filter
-   ============================================================ */
-/* ============================================================
-   BROWSE PAGE — dynamically render localStorage datasets
-   Merges seeded static cards with admin-uploaded ones.
+   SEED DATASETS (used as fallback when localStorage is empty)
    ============================================================ */
 var SEED_DATASETS = [
   { id:'seed-001', title:'SME Tax Compliance Panel, 2015–2024',
     description:'Firm-level compliance and filing behaviour across 4,200 small and medium enterprises.',
-    category:'taxation', tags:['Taxation','Panel data'], price:4500, downloads:312,
+    category:'Taxation', tags:['Taxation','Panel data'], price:4500, downloads:0,
+    uploadedBy:'admin@researchhub.ng',
     createdAt:'2024-01-10T00:00:00.000Z' },
   { id:'seed-002', title:'Audit Fee Determinants Dataset',
     description:'Ten years of audit fee, tenure and firm-size data across listed companies in 12 markets.',
-    category:'auditing', tags:['Auditing','Cross-country'], price:5000, downloads:198,
+    category:'Auditing', tags:['Auditing','Cross-country'], price:5000, downloads:0,
+    uploadedBy:'admin@researchhub.ng',
     createdAt:'2024-02-14T00:00:00.000Z' },
   { id:'seed-003', title:'Corporate Governance Index Data',
     description:'Governance scoring for 600 emerging-market firms, built from board and disclosure records.',
-    category:'governance', tags:['Governance','Emerging markets'], price:4800, downloads:147,
+    category:'Governance', tags:['Governance','Emerging markets'], price:4800, downloads:0,
+    uploadedBy:'admin@researchhub.ng',
     createdAt:'2024-03-01T00:00:00.000Z' },
   { id:'seed-004', title:'SME Working Capital Survey',
     description:'Survey responses on liquidity management practices from 1,050 small business owners.',
-    category:'finance', tags:['Corporate finance','Survey data'], price:3500, downloads:89,
+    category:'Corporate finance', tags:['Corporate finance','Survey data'], price:3500, downloads:0,
+    uploadedBy:'admin@researchhub.ng',
     createdAt:'2024-04-05T00:00:00.000Z' },
   { id:'seed-005', title:'Informal Sector Revenue Estimates',
     description:'Municipal-level revenue estimates for informal trading activity across 40 districts.',
-    category:'economics', tags:['Economics','Regional data'], price:2500, downloads:64,
+    category:'Economics', tags:['Economics','Regional data'], price:2500, downloads:0,
+    uploadedBy:'admin@researchhub.ng',
     createdAt:'2024-05-20T00:00:00.000Z' },
   { id:'seed-006', title:'Dividend Policy Panel, 2012–2023',
     description:'Payout ratios and dividend announcements for 300 listed firms over eleven years.',
-    category:'finance', tags:['Corporate finance','Panel data'], price:4900, downloads:211,
+    category:'Corporate finance', tags:['Corporate finance','Panel data'], price:4900, downloads:0,
+    uploadedBy:'admin@researchhub.ng',
     createdAt:'2024-06-11T00:00:00.000Z' }
 ];
 
+/* Returns all datasets: uploaded first (newest), then seeds that don't overlap */
+function getAllDatasets() {
+  var uploaded = getDatasets();
+  var uploadedIds = uploaded.map(function(d){ return d.id; });
+  var seeds = SEED_DATASETS.filter(function(s){ return uploadedIds.indexOf(s.id) === -1; });
+  return uploaded.concat(seeds);
+}
+
+/* ============================================================
+   HOME PAGE — live recent papers + featured datasets
+   ============================================================ */
+function initHomePage() {
+  var page = currentPage();
+  if (page !== 'index.html' && page !== '') return;
+
+  var all = getAllDatasets();
+
+  // Sort by createdAt descending (newest first)
+  var sorted = all.slice().sort(function(a, b){
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  /* --- Ledger card (recently added) --- */
+  var ledgerContainer = document.getElementById('home-ledger-rows');
+  if (ledgerContainer) {
+    ledgerContainer.innerHTML = '';
+    var recent = sorted.slice(0, 4);
+    if (recent.length === 0) {
+      ledgerContainer.innerHTML = '<div class="ledger-row"><span class="name">No datasets yet.</span></div>';
+    } else {
+      recent.forEach(function(ds) {
+        var row = document.createElement('div');
+        row.className = 'ledger-row';
+        var meta = ds.category || '';
+        row.innerHTML =
+          '<span class="name">' + escHtml(ds.title) +
+            (meta ? '<span class="meta">' + escHtml(meta) + '</span>' : '') +
+          '</span>' +
+          '<span class="amount">₦' + Number(ds.price).toLocaleString() + '</span>';
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', function(){
+          window.location.href = 'dataset.html?id=' + encodeURIComponent(ds.id);
+        });
+        ledgerContainer.appendChild(row);
+      });
+    }
+  }
+
+  /* --- Featured datasets section --- */
+  var featuredList = document.getElementById('home-featured-list');
+  if (featuredList) {
+    featuredList.innerHTML = '';
+    var featured = sorted.slice(0, 3);
+    if (featured.length === 0) {
+      featuredList.innerHTML = '<p style="color:var(--ink-soft);padding:16px 0;">No datasets have been uploaded yet.</p>';
+    } else {
+      featured.forEach(function(ds) {
+        var tags = (ds.tags || [ds.category]).slice(0, 2);
+        var tagHtml = tags.map(function(t){ return '<span class="tag">' + escHtml(t || '') + '</span>'; }).join('');
+        var a = document.createElement('a');
+        a.href = 'dataset.html?id=' + encodeURIComponent(ds.id);
+        a.className = 'data-item';
+        a.innerHTML =
+          '<div>' +
+            '<h3 class="data-title">' + escHtml(ds.title) + '</h3>' +
+            '<p class="data-desc">' + escHtml(ds.description || '') + '</p>' +
+            '<div class="data-tags">' + tagHtml + '</div>' +
+          '</div>' +
+          '<div class="data-stats"><span class="dl-icon">⬇</span> ' + (ds.downloads || 0) + '</div>' +
+          '<div class="data-price">₦' + Number(ds.price).toLocaleString() + '</div>';
+        featuredList.appendChild(a);
+      });
+    }
+  }
+}
+
+/* ============================================================
+   BROWSE — always render dynamically from localStorage
+   ============================================================ */
 function initBrowsePage() {
   var list = document.getElementById('dataset-list'); if (!list) return;
 
-  // Load admin-uploaded datasets from localStorage
-  var uploaded = getDatasets();
+  var all = getAllDatasets();
 
-  // Skip render if no uploaded datasets (static HTML cards already in DOM)
-  if (!uploaded.length) return;
+  // Sort newest first
+  all.sort(function(a, b){ return new Date(b.createdAt) - new Date(a.createdAt); });
 
-  // We have uploaded datasets: clear static HTML and re-render ALL (seed + uploaded)
   list.innerHTML = '';
-  var all = SEED_DATASETS.concat(uploaded);
   all.forEach(function(ds) {
-    var tags = (ds.tags || []).concat(ds.category ? [] : []).slice(0,2);
-    if (!tags.length && ds.category) tags = [ds.category.charAt(0).toUpperCase()+ds.category.slice(1)];
-    var tagHtml = tags.map(function(t){ return '<span class="tag">'+escHtml(t)+'</span>'; }).join('');
+    var tags = (ds.tags || []).slice(0, 2);
+    if (!tags.length && ds.category) tags = [ds.category];
+    var tagHtml = tags.map(function(t){ return '<span class="tag">' + escHtml(t) + '</span>'; }).join('');
+    var catLower = (ds.category || '').toLowerCase().replace(/\s+/g, '_');
     var a = document.createElement('a');
-    a.href = 'dataset.html';
+    a.href = 'dataset.html?id=' + encodeURIComponent(ds.id);
     a.className = 'data-item';
-    a.setAttribute('data-category', ds.category || 'other');
-    a.setAttribute('data-search', (ds.title+' '+ds.description+' '+(ds.tags||[]).join(' ')).toLowerCase());
+    a.setAttribute('data-category', catLower);
+    a.setAttribute('data-search', (ds.title + ' ' + (ds.description||'') + ' ' + (ds.tags||[]).join(' ')).toLowerCase());
     a.setAttribute('data-dsid', ds.id);
     a.innerHTML =
       '<div>' +
@@ -565,13 +674,19 @@ function initSearchFilter() {
   var searchInput = document.getElementById('dataset-search');
   var list        = document.getElementById('dataset-list');
   if (!list) return;
-  var items      = Array.prototype.slice.call(list.querySelectorAll('.data-item'));
-  var checkboxes = document.querySelectorAll('.filter-option input[type="checkbox"]');
   var emptyState = document.getElementById('empty-state');
+
+  function getItems() {
+    return Array.prototype.slice.call(list.querySelectorAll('.data-item'));
+  }
+
+  var checkboxes = document.querySelectorAll('.filter-option input[type="checkbox"]');
+
   function applyFilters() {
+    var items = getItems();
     var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
     var activeCats = Array.prototype.slice.call(checkboxes)
-      .filter(function(c){ return c.checked; }).map(function(c){ return c.value; });
+      .filter(function(c){ return c.checked; }).map(function(c){ return c.value.toLowerCase().replace(/\s+/g,'_'); });
     var visible = 0;
     items.forEach(function(item) {
       var text = (item.getAttribute('data-search')||'').toLowerCase();
@@ -584,6 +699,84 @@ function initSearchFilter() {
   }
   if (searchInput) searchInput.addEventListener('input', applyFilters);
   checkboxes.forEach(function(c){ c.addEventListener('change', applyFilters); });
+}
+
+/* ============================================================
+   DATASET DETAIL PAGE — load from URL ?id= param
+   ============================================================ */
+function initDatasetPage() {
+  if (currentPage() !== 'dataset.html') return;
+
+  var dsid = getUrlParam('id');
+  var all  = getAllDatasets();
+  var ds   = null;
+
+  if (dsid) {
+    ds = all.find(function(d){ return d.id === dsid; });
+  }
+  if (!ds && all.length > 0) {
+    ds = all[0]; // fallback to first available
+  }
+  if (!ds) {
+    // No datasets at all — show a message
+    var main = document.getElementById('main');
+    if (main) main.innerHTML = '<section><div class="wrap"><p style="padding:40px 0;color:var(--ink-soft);">No dataset found. <a href="browse.html">Browse all datasets &rarr;</a></p></div></section>';
+    return;
+  }
+
+  // Update page title
+  document.title = escHtml(ds.title) + ' — Research Hub';
+
+  // Breadcrumb
+  setText('ds-category-crumb', ds.category || 'Research');
+
+  // Main content
+  setText('ds-title',       ds.title);
+  setText('ds-description', ds.description || '');
+  setText('ds-category',    ds.category || '—');
+  setText('ds-price',       '₦' + Number(ds.price).toLocaleString());
+  setText('ds-uploader',    ds.uploadedBy || '—');
+  setText('ds-download-count', ds.downloads || 0);
+
+  // Date
+  if (ds.createdAt) {
+    setText('ds-date', new Date(ds.createdAt).toLocaleDateString('en-NG', {year:'numeric',month:'long',day:'numeric'}));
+  }
+
+  // Tags
+  var tagsEl = document.getElementById('ds-tags');
+  if (tagsEl) {
+    var tags = ds.tags || (ds.category ? [ds.category] : []);
+    tagsEl.innerHTML = tags.map(function(t){ return '<span class="tag">' + escHtml(t) + '</span>'; }).join('');
+  }
+
+  // Buy button — wire up data attributes
+  var buyBtn = document.getElementById('ds-buy-btn');
+  if (buyBtn) {
+    buyBtn.setAttribute('data-buy',  ds.title);
+    buyBtn.setAttribute('data-dsid', ds.id);
+  }
+
+  // Buy panel price display
+  var priceEl = document.getElementById('ds-buy-price');
+  if (priceEl) priceEl.textContent = '₦' + Number(ds.price).toLocaleString();
+
+  // File download link — if file data was stored as base64
+  var fileLink = document.getElementById('ds-file-link');
+  if (fileLink) {
+    if (ds.fileData) {
+      fileLink.href = ds.fileData;
+      fileLink.download = ds.fileName || (ds.title + '.pdf');
+      fileLink.style.display = 'inline';
+      fileLink.textContent = 'Download full paper (' + (ds.fileName || 'file') + ')';
+    } else if (ds.fileName) {
+      fileLink.textContent = ds.fileName + ' (file stored externally)';
+      fileLink.removeAttribute('href');
+      fileLink.style.color = 'var(--ink-soft)';
+    } else {
+      fileLink.style.display = 'none';
+    }
+  }
 }
 
 /* ============================================================
@@ -751,10 +944,10 @@ function renderAdminPapers() {
 }
 
 /* ============================================================
-   ADMIN — UPLOAD (PDF / DOCX only)
+   ADMIN — UPLOAD (PDF / DOCX only) — stores file as base64
    ============================================================ */
 function initAdminUpload() {
-  var form     = document.getElementById('admin-upload-form'); if (!form) return;
+  var form      = document.getElementById('admin-upload-form'); if (!form) return;
   var fileInput = document.getElementById('a-file');
 
   // Restrict file picker to PDF / DOCX at the browser level
@@ -773,9 +966,10 @@ function initAdminUpload() {
     if (!title || !category || !price) { showToast('Please fill in all required fields.'); return; }
     if (price > 5000) { showToast('Price cannot exceed ₦5,000.'); return; }
 
+    var file = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+
     // File type validation
-    if (fileInput && fileInput.files && fileInput.files.length > 0) {
-      var file = fileInput.files[0];
+    if (file) {
       var name = file.name.toLowerCase();
       var ok   = name.endsWith('.pdf') || name.endsWith('.docx');
       if (!ok) {
@@ -784,23 +978,46 @@ function initAdminUpload() {
       }
     }
 
+    // Tags from category
+    var tags = category ? [category] : [];
+
+    if (file) {
+      // Read file as base64 DataURL so it can be served from localStorage
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var dataUrl = ev.target.result;
+        saveNewDataset(title, desc, category, tags, price, user, file.name, file.type, dataUrl);
+      };
+      reader.onerror = function() {
+        showToast('Could not read file. Please try again.');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      saveNewDataset(title, desc, category, tags, price, user, '', '', null);
+    }
+  });
+
+  function saveNewDataset(title, desc, category, tags, price, user, fileName, fileType, fileData) {
     var datasets = getDatasets();
-    datasets.push({
-      id:         genId('ds'),
-      title:      title,
-      description:desc,
-      category:   category,
-      price:      price,
-      downloads:  0,
-      uploadedBy: user ? user.email : 'admin',
-      fileName:   fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0].name : '',
-      fileType:   fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0].type : '',
-      createdAt:  new Date().toISOString()
-    });
+    var record = {
+      id:          genId('ds'),
+      title:       title,
+      description: desc,
+      category:    category,
+      tags:        tags,
+      price:       price,
+      downloads:   0,
+      uploadedBy:  user ? user.email : 'admin',
+      fileName:    fileName,
+      fileType:    fileType,
+      createdAt:   new Date().toISOString()
+    };
+    if (fileData) record.fileData = fileData;
+    datasets.push(record);
     saveDatasets(datasets);
     form.reset();
     showToast('"' + title + '" added to the archive successfully.');
-  });
+  }
 }
 
 /* ============================================================
