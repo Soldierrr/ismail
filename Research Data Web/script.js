@@ -9,6 +9,9 @@ var PAYMENTS_KEY = 'ledger_payments';
 var CONTENT_KEY  = 'ledger_site_content';
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Restore custom logo and favicon from localStorage on every page
+  applyStoredBrandAssets();
+
   seedAdmin();
   seedSiteContent();
 
@@ -43,6 +46,42 @@ document.addEventListener('DOMContentLoaded', function () {
     initDatasetPage();
   }
 });
+
+/* ============================================================
+   BRAND ASSETS — apply stored logo / favicon from localStorage
+   ============================================================ */
+function applyStoredBrandAssets() {
+  var logo = localStorage.getItem('rh_logo_dataurl');
+  if (logo) {
+    document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
+      img.src = logo;
+    });
+  }
+  var fav = localStorage.getItem('rh_favicon_dataurl');
+  if (fav) {
+    document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
+      el.href = fav;
+    });
+  }
+}
+
+/* ============================================================
+   BRAND ASSETS — apply stored logo / favicon from localStorage
+   ============================================================ */
+function applyStoredBrandAssets() {
+  var logo = localStorage.getItem('rh_logo_dataurl');
+  if (logo) {
+    document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
+      img.src = logo;
+    });
+  }
+  var fav = localStorage.getItem('rh_favicon_dataurl');
+  if (fav) {
+    document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
+      el.href = fav;
+    });
+  }
+}
 
 /* ============================================================
    UTILITIES
@@ -98,6 +137,14 @@ function getUrlParam(name) {
    ============================================================ */
 function seedAdmin() {
   var users = getUsers();
+  
+  // Remove old ledger admin account if present in user's localStorage
+  var filteredUsers = users.filter(function(u) { return u.email !== 'admin@ledger.com'; });
+  if (filteredUsers.length !== users.length) {
+    saveUsers(filteredUsers);
+    users = filteredUsers;
+  }
+
   if (!users.some(function(u){ return u.email==='admin@researchhub.ng'; })) {
     users.push({
       id:'admin-seed-001', firstName:'Research Hub', lastName:'Admin', otherNames:'',
@@ -524,47 +571,10 @@ function initTicketForm() {
 }
 
 /* ============================================================
-   SEED DATASETS (used as fallback when localStorage is empty)
+   ALL DATASETS — only real admin-uploaded papers
    ============================================================ */
-var SEED_DATASETS = [
-  { id:'seed-001', title:'SME Tax Compliance Panel, 2015–2024',
-    description:'Firm-level compliance and filing behaviour across 4,200 small and medium enterprises.',
-    category:'Taxation', tags:['Taxation','Panel data'], price:4500, downloads:0,
-    uploadedBy:'admin@researchhub.ng',
-    createdAt:'2024-01-10T00:00:00.000Z' },
-  { id:'seed-002', title:'Audit Fee Determinants Dataset',
-    description:'Ten years of audit fee, tenure and firm-size data across listed companies in 12 markets.',
-    category:'Auditing', tags:['Auditing','Cross-country'], price:5000, downloads:0,
-    uploadedBy:'admin@researchhub.ng',
-    createdAt:'2024-02-14T00:00:00.000Z' },
-  { id:'seed-003', title:'Corporate Governance Index Data',
-    description:'Governance scoring for 600 emerging-market firms, built from board and disclosure records.',
-    category:'Governance', tags:['Governance','Emerging markets'], price:4800, downloads:0,
-    uploadedBy:'admin@researchhub.ng',
-    createdAt:'2024-03-01T00:00:00.000Z' },
-  { id:'seed-004', title:'SME Working Capital Survey',
-    description:'Survey responses on liquidity management practices from 1,050 small business owners.',
-    category:'Corporate finance', tags:['Corporate finance','Survey data'], price:3500, downloads:0,
-    uploadedBy:'admin@researchhub.ng',
-    createdAt:'2024-04-05T00:00:00.000Z' },
-  { id:'seed-005', title:'Informal Sector Revenue Estimates',
-    description:'Municipal-level revenue estimates for informal trading activity across 40 districts.',
-    category:'Economics', tags:['Economics','Regional data'], price:2500, downloads:0,
-    uploadedBy:'admin@researchhub.ng',
-    createdAt:'2024-05-20T00:00:00.000Z' },
-  { id:'seed-006', title:'Dividend Policy Panel, 2012–2023',
-    description:'Payout ratios and dividend announcements for 300 listed firms over eleven years.',
-    category:'Corporate finance', tags:['Corporate finance','Panel data'], price:4900, downloads:0,
-    uploadedBy:'admin@researchhub.ng',
-    createdAt:'2024-06-11T00:00:00.000Z' }
-];
-
-/* Returns all datasets: uploaded first (newest), then seeds that don't overlap */
 function getAllDatasets() {
-  var uploaded = getDatasets();
-  var uploadedIds = uploaded.map(function(d){ return d.id; });
-  var seeds = SEED_DATASETS.filter(function(s){ return uploadedIds.indexOf(s.id) === -1; });
-  return uploaded.concat(seeds);
+  return getDatasets();
 }
 
 /* ============================================================
@@ -761,18 +771,27 @@ function initDatasetPage() {
   var priceEl = document.getElementById('ds-buy-price');
   if (priceEl) priceEl.textContent = '₦' + Number(ds.price).toLocaleString();
 
-  // File download link — if file data was stored as base64
+  // File download link & preview
   var fileLink = document.getElementById('ds-file-link');
+  var previewIframe = document.getElementById('ds-preview-iframe');
+  
   if (fileLink) {
     if (ds.fileData) {
       fileLink.href = ds.fileData;
       fileLink.download = ds.fileName || (ds.title + '.pdf');
-      fileLink.style.display = 'inline';
+      fileLink.style.display = 'inline-block';
       fileLink.textContent = 'Download full paper (' + (ds.fileName || 'file') + ')';
+      
+      // If it's a PDF, show a preview
+      if (previewIframe && ds.fileData.indexOf('data:application/pdf') === 0) {
+        previewIframe.src = ds.fileData;
+        previewIframe.style.display = 'block';
+      }
     } else if (ds.fileName) {
       fileLink.textContent = ds.fileName + ' (file stored externally)';
       fileLink.removeAttribute('href');
       fileLink.style.color = 'var(--ink-soft)';
+      fileLink.style.display = 'inline-block';
     } else {
       fileLink.style.display = 'none';
     }
