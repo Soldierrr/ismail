@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Paper — Research Hub Admin</title>
+<meta name="description" content="Research Hub Administrator dashboard — Upload paper.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+
+  <!-- Mobile top bar -->
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem; color:var(--paper);">Research Hub</a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Research Hub</a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <a href="admin-dashboard.html" class="admin-nav-link">📊 Dashboard</a>
+      <a href="admin-users.html"     class="admin-nav-link">👥 Users</a>
+      <a href="admin-papers.html"    class="admin-nav-link">📄 Papers</a>
+      <a href="admin-upload.html"    class="admin-nav-link" style="color:var(--primary); font-weight:600;">⬆ Upload</a>
+      <a href="admin-payments.html"  class="admin-nav-link">💳 Payments</a>
+      <a href="admin-tickets.html"   class="admin-nav-link">🎫 Support Tickets</a>
+      <a href="admin-profile.html"   class="admin-nav-link">👤 My Profile</a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">⏻ Log out</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="admin-content">
+    <div class="admin-page-header">
+      <p class="eyebrow" style="margin-bottom:4px;">Upload</p>
+      <h1>Upload New Paper</h1>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- Upload Form -->
+      <div class="admin-panel" style="max-width: 600px; margin-top: 32px;">
+        <h2 style="font-size:1.1rem; margin-bottom:16px;">Paper Details</h2>
+        <form id="admin-upload-form" style="display: flex; flex-direction: column; gap: 15px;">
+          <input type="text" id="admin-paper-title" placeholder="Paper Title" required style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+          <input type="number" id="admin-paper-price" placeholder="Price (Naira)" required style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+          <div style="border: 1px dashed #cbd5e1; padding: 20px; border-radius: 6px; text-align: center;">
+            <label for="admin-paper-file" style="display:block; margin-bottom: 10px; font-weight: 500;">Select PDF File</label>
+            <input type="file" id="admin-paper-file" accept="application/pdf" required style="font-family: inherit;">
+          </div>
+          <button type="submit" class="btn btn-primary" id="admin-submit-btn" style="padding: 12px; font-size: 1.1rem; margin-top: 10px;">Upload to Storefront</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="/script.js"></script>
+<script type="module" src="/animations.js"></script>
+</body>
+</html>

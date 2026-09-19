@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-BUkpCu_D.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-BUkpCu_D.png">
+<link rel="apple-touch-icon" href="/assets/favicon-BUkpCu_D.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papers — Research Hub Admin</title>
+<meta name="description" content="View and manage all uploaded datasets in the Research Hub archive.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/animations-Bws6Ryri.js"></script>
+  <script type="module" crossorigin src="/assets/script-DkHYuaIB.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/script-CNq4EtHl.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem; color:var(--paper);">Research Hub</a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Research Hub</a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <a href="admin-dashboard.html" class="admin-nav-link">📊 Dashboard</a>
+      <a href="admin-users.html"     class="admin-nav-link">👥 Users</a>
+      <a href="admin-papers.html"    class="admin-nav-link">📄 Papers</a>
+      <a href="admin-upload.html"    class="admin-nav-link">⬆ Upload</a>
+      <a href="admin-payments.html"  class="admin-nav-link">💳 Payments</a>
+      <a href="admin-tickets.html"   class="admin-nav-link">🎫 Support Tickets</a>
+      <a href="admin-profile.html"   class="admin-nav-link">👤 My Profile</a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">⏻ Log out</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <p class="eyebrow" style="margin-bottom:4px;">Manage</p>
+        <h1>Papers</h1>
+      </div>
+      <a href="admin-upload.html" class="btn btn-primary">⬆ Upload New</a>
+    </div>
+    <div class="admin-body">
+      <p style="color:var(--ink-soft); margin-bottom:24px; font-size:0.95rem;">All datasets uploaded through the admin panel. Use the Upload page to add new entries.</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Field</th>
+              <th>Price (NGN)</th>
+              <th>Downloads</th>
+              <th>Uploaded by</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-papers-tbody">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--ink-soft);">Loading datasets…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

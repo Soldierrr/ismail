@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-BUkpCu_D.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-BUkpCu_D.png">
+<link rel="apple-touch-icon" href="/assets/favicon-BUkpCu_D.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse the archive â€” Research Hub</title>
+<meta name="description" content="Browse verified accounting, finance and business research datasets. Filter by field and price, preview samples, and purchase instantly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/animations-Bws6Ryri.js"></script>
+  <script type="module" crossorigin src="/assets/script-DkHYuaIB.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/script-CNq4EtHl.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand" aria-label="Research Hub home"><img src="/assets/logo-BEb4-giD.png" alt="Research Hub" class="brand-logo"></a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="browse.html" class="active">Browse</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Log in</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <section style="padding-bottom: 0;">
+    <div class="wrap">
+      <p class="eyebrow">The archive</p>
+      <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem);">Browse research datasets</h1>
+      <p class="lede">Every dataset includes a description, a sample file and a suggested citation, so you know exactly what you're buying.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap browse-layout">
+      <aside>
+        <input type="text" id="dataset-search" class="search-box" placeholder="Search by title or keyword">
+
+        <div class="filter-group">
+          <h4>Field</h4>
+          <label class="filter-option"><input type="checkbox" value="taxation"> Taxation</label>
+          <label class="filter-option"><input type="checkbox" value="auditing"> Auditing</label>
+          <label class="filter-option"><input type="checkbox" value="corporate_finance"> Corporate finance</label>
+          <label class="filter-option"><input type="checkbox" value="governance"> Governance</label>
+          <label class="filter-option"><input type="checkbox" value="economics"> Economics</label>
+        </div>
+
+        <div class="filter-group">
+          <h4>Price (NGN)</h4>
+          <label class="filter-option"><input type="radio" name="price" checked> Any price</label>
+          <label class="filter-option"><input type="radio" name="price"> Under â‚¦2,000</label>
+          <label class="filter-option"><input type="radio" name="price"> â‚¦2,000â€“â‚¦3,500</label>
+          <label class="filter-option"><input type="radio" name="price"> Over â‚¦3,500</label>
+        </div>
+      </aside>
+
+      <div>
+        <!-- All dataset cards are rendered dynamically by initBrowsePage() -->
+        <div class="data-list" id="dataset-list"></div>
+        <p id="empty-state" style="display:none; color: var(--ink-soft); padding: 24px 0;">No datasets match your search. Try a different keyword or clear a filter.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <a href="index.html" class="brand" aria-label="Research Hub home"><img src="/assets/logo-BEb4-giD.png" alt="Research Hub" class="brand-logo" style="height:30px;"></a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="browse.html">Browse datasets</a>
+          <a href="upload.html">Sell your data</a>
+        </div>
+        <div class="footer-col">
+          <h5>About</h5>
+          <a href="about.html">The researcher</a>
+          <a href="contact.html">Contact &amp; FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">Â© 2026 Research Hub. Research data, sold directly by the people who collected it.</div>
+  </div>
+</footer>
+
+</body>
+</html>

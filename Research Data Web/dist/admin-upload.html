@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-BUkpCu_D.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-BUkpCu_D.png">
+<link rel="apple-touch-icon" href="/assets/favicon-BUkpCu_D.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload — Research Hub Admin</title>
+<meta name="description" content="Upload a new dataset to the Research Hub archive. Set title, description, category and price in NGN.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/animations-Bws6Ryri.js"></script>
+  <script type="module" crossorigin src="/assets/script-DkHYuaIB.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/script-CNq4EtHl.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem; color:var(--paper);">Research Hub</a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Research Hub</a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <a href="admin-dashboard.html" class="admin-nav-link">📊 Dashboard</a>
+      <a href="admin-users.html"     class="admin-nav-link">👥 Users</a>
+      <a href="admin-papers.html"    class="admin-nav-link">📄 Papers</a>
+      <a href="admin-upload.html"    class="admin-nav-link">⬆ Upload</a>
+      <a href="admin-payments.html"  class="admin-nav-link">💳 Payments</a>
+      <a href="admin-tickets.html"   class="admin-nav-link">🎫 Support Tickets</a>
+      <a href="admin-profile.html"   class="admin-nav-link">👤 My Profile</a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">⏻ Log out</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-header">
+      <p class="eyebrow" style="margin-bottom:4px;">Manage</p>
+      <h1>Upload Dataset</h1>
+    </div>
+    <div class="admin-body">
+      <div class="form-panel" style="max-width:680px;">
+        <p style="color:var(--ink-soft); font-size:0.92rem; margin-bottom:24px;">Add a new dataset to the archive. Prices are in Nigerian Naira (₦) with a maximum of ₦5,000.</p>
+        <form id="admin-upload-form" novalidate>
+          <div class="field">
+            <label for="a-title">Dataset title</label>
+            <input type="text" id="a-title" placeholder="e.g. Corporate Tax Avoidance Panel, 2020–2024" required>
+            <div class="field-error">Please enter a dataset title.</div>
+          </div>
+          <div class="field">
+            <label for="a-description">Description</label>
+            <textarea id="a-description" rows="4" placeholder="What does this dataset contain, how was it collected, and who is it useful for?"></textarea>
+          </div>
+          <div class="field">
+            <label for="a-category">Field / Category</label>
+            <select id="a-category" required>
+              <option value="">Select a field</option>
+              <option value="Taxation">Taxation</option>
+              <option value="Auditing">Auditing</option>
+              <option value="Corporate finance">Corporate finance</option>
+              <option value="Governance">Governance</option>
+              <option value="Economics">Economics</option>
+              <option value="Other">Other business research</option>
+            </select>
+            <div class="field-error">Please select a field.</div>
+          </div>
+          <div class="field">
+            <label for="a-price">Price (NGN) — maximum ₦5,000</label>
+            <input type="number" id="a-price" min="1" max="5000" step="1" placeholder="e.g. 3000">
+            <div class="hint">Enter an amount between ₦1 and ₦5,000.</div>
+            <div class="field-error">Please enter a valid price (₦1–₦5,000).</div>
+          </div>
+          <div class="field">
+            <label for="a-file">Full dataset file</label>
+            <div class="file-drop">
+              This file is delivered to the buyer after payment.
+              <br><input type="file" id="a-file" name="a-file">
+            </div>
+          </div>
+          <div class="field">
+            <label for="a-sample">Sample file <span class="field-opt">(optional)</span></label>
+            <div class="file-drop">
+              A small preview shown publicly on the listing.
+              <br><input type="file" id="a-sample" name="a-sample">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Add to archive</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

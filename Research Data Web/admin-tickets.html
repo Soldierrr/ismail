@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Tickets — Research Hub Admin</title>
+<meta name="description" content="View and resolve all support tickets submitted by users on Research Hub">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem; color:var(--paper);">Research Hub</a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Research Hub</a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <a href="admin-dashboard.html" class="admin-nav-link">📊 Dashboard</a>
+      <a href="admin-users.html"     class="admin-nav-link">👥 Users</a>
+      <a href="admin-papers.html"    class="admin-nav-link">📄 Papers</a>
+      <a href="admin-upload.html"    class="admin-nav-link">⬆ Upload</a>
+      <a href="admin-payments.html"  class="admin-nav-link">💳 Payments</a>
+      <a href="admin-tickets.html"   class="admin-nav-link">🎫 Support Tickets</a>
+      <a href="admin-profile.html"   class="admin-nav-link">👤 My Profile</a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">⏻ Log out</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-header">
+      <p class="eyebrow" style="margin-bottom:4px;">Support</p>
+      <h1>Support Tickets</h1>
+    </div>
+    <div class="admin-body" id="admin-tickets-container">
+      <p style="color:var(--ink-soft); margin-bottom:24px; font-size:0.95rem;">Review all support tickets submitted through the Contact page. Open tickets are shown first.</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Ref #</th>
+              <th>Date</th>
+              <th>From</th>
+              <th>Category</th>
+              <th>Subject</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-tickets-tbody">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--ink-soft);">Loading tickets…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ticket detail modal -->
+<div class="ticket-modal-overlay" id="ticket-modal" style="display:none;" role="dialog" aria-modal="true" aria-label="Ticket detail">
+  <div class="ticket-modal-box">
+    <div class="ticket-modal-header">
+      <h3>Ticket <span id="modal-ref"></span></h3>
+      <button class="ticket-modal-close" id="modal-close" aria-label="Close">×</button>
+    </div>
+    <table class="detail-meta-table" style="margin-bottom:20px;">
+      <tr><td>From</td><td id="modal-from">—</td></tr>
+      <tr><td>Date</td><td id="modal-date">—</td></tr>
+      <tr><td>Category</td><td id="modal-category">—</td></tr>
+      <tr><td>Subject</td><td id="modal-subject">—</td></tr>
+      <tr><td>Status</td><td id="modal-status">—</td></tr>
+    </table>
+    <h4 style="margin-bottom:8px;">Message</h4>
+    <div class="ticket-modal-message" id="modal-message"></div>
+  </div>
+</div>
+
+<script type="module" src="/script.js"></script>
+<script type="module" src="/animations.js"></script>
+</body>
+</html>

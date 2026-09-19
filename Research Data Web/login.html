@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in / Create Account — Research Hub</title>
+<meta name="description" content="Log in or create an account on Research Hub to browse, purchase and upload research datasets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="site-header">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="theme-color" content="#16292B">
+  <nav class="nav">
+    <a href="index.html" class="brand" aria-label="Research Hub home"><img src="logo.png" alt="Research Hub" class="brand-logo"></a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="browse.html">Browse</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html" class="active">Log in</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <section>
+    <div class="wrap" style="max-width: 560px;">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login-panel">Log in</button>
+        <button class="tab-btn" data-tab="register-panel">Create account</button>
+      </div>
+
+      <div class="form-panel" style="max-width: none; padding: 32px;">
+
+        <!-- ===== LOGIN PANEL ===== -->
+        <div class="tab-panel active" id="login-panel">
+          <form data-auth-form="login" novalidate>
+            <div class="field">
+              <label for="login-email">Email address</label>
+              <input type="email" id="login-email" placeholder="e.g. you@example.com" required>
+              <div class="field-error">Email address is required.</div>
+            </div>
+            <div class="field">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" placeholder="Your password" required>
+              <div class="field-error">Password is required.</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+          </form>
+        </div>
+
+        <!-- ===== REGISTER PANEL ===== -->
+        <div class="tab-panel" id="register-panel">
+          <form data-auth-form="register" novalidate>
+
+            <div class="form-row-two">
+              <div class="field">
+                <label for="reg-firstname">First name</label>
+                <input type="text" id="reg-firstname" placeholder="e.g. Chukwuemeka" required>
+                <div class="field-error">First name is required.</div>
+              </div>
+              <div class="field">
+                <label for="reg-lastname">Last name</label>
+                <input type="text" id="reg-lastname" placeholder="e.g. Obi" required>
+                <div class="field-error">Last name is required.</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="reg-othernames">Other names <span class="field-opt">(optional)</span></label>
+              <input type="text" id="reg-othernames" placeholder="e.g. Nnamdi">
+            </div>
+
+            <div class="field">
+              <label for="reg-email">Email address</label>
+              <input type="email" id="reg-email" placeholder="e.g. you@example.com" required>
+              <div class="field-error">Please enter a valid email address.</div>
+            </div>
+
+            <div class="field">
+              <label for="reg-password">Password</label>
+              <input type="password" id="reg-password" placeholder="At least 8 characters" required>
+              <div class="hint">Use at least 8 characters — mix letters, numbers and symbols.</div>
+              <div class="field-error">Password must be at least 8 characters.</div>
+            </div>
+
+            <div class="field">
+              <label for="reg-confirm-password">Confirm password</label>
+              <input type="password" id="reg-confirm-password" placeholder="Repeat your password" required>
+              <div class="field-error">Passwords do not match.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Create account</button>
+          </form>
+        </div>
+
+      </div><!-- /form-panel -->
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <a href="index.html" class="brand" aria-label="Research Hub home"><img src="logo.png" alt="Research Hub" class="brand-logo" style="height:30px;"></a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="browse.html">Browse datasets</a>
+          <a href="upload.html">Sell your data</a>
+        </div>
+        <div class="footer-col">
+          <h5>About</h5>
+          <a href="about.html">The researcher</a>
+          <a href="contact.html">Contact &amp; FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Research Hub. Research data, sold directly by the people who collected it.</div>
+  </div>
+</footer>
+
+<script type="module" src="/script.js"></script>
+<script type="module" src="/animations.js"></script>
+</body>
+</html>

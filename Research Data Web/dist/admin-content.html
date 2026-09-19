@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-BUkpCu_D.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-BUkpCu_D.png">
+<link rel="apple-touch-icon" href="/assets/favicon-BUkpCu_D.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content â€” Research Hub Admin</title>
+<meta name="description" content="Edit the public-facing About page, Contact information, Logo and Favicon for Research Hub">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>.brand-asset-panel{flex-wrap:wrap;align-items:flex-start;gap:28px;display:flex}.brand-asset-preview{border:2px dashed var(--border);background:var(--surface);border-radius:12px;flex-shrink:0;justify-content:center;align-items:center;width:120px;height:120px;display:flex;overflow:hidden}.brand-asset-preview img{object-fit:contain;max-width:100%;max-height:100%}.brand-asset-preview.favicon-preview{border-radius:8px;width:72px;height:72px}.brand-asset-info{flex:1;min-width:220px}.brand-asset-info p{color:var(--ink-soft);margin:0 0 14px;font-size:.88rem}.asset-upload-label{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);cursor:pointer;border-radius:8px;align-items:center;gap:8px;padding:9px 18px;font-size:.88rem;font-weight:500;transition:border-color .18s,background .18s;display:inline-flex}.asset-upload-label:hover{border-color:var(--accent);background:var(--accent-soft,#e8f4fd)}.asset-upload-label input[type=file]{display:none}.asset-file-name{color:var(--ink-soft);margin-top:6px;font-size:.82rem}.asset-save-btn{margin-top:14px}</style>
+  <script type="module" crossorigin src="/assets/animations-Bws6Ryri.js"></script>
+  <script type="module" crossorigin src="/assets/script-DkHYuaIB.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/script-CNq4EtHl.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem;color:var(--paper);">Research Hub</a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Research Hub</a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <!-- rebuilt dynamically by script.js initAdminSidebar() -->
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">&#x1F6AA; Log out</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-header">
+      <p class="eyebrow" style="margin-bottom:4px;">Site Management</p>
+      <h1>Content</h1>
+    </div>
+
+    <div class="admin-body" style="display:flex; flex-direction:column; gap:28px; max-width:720px;">
+
+      <p style="color:var(--ink-soft);font-size:0.95rem;margin:0;">
+        Edit the content shown on the public <strong>About</strong> and <strong>Contact</strong> pages, and update the site <strong>Logo</strong> and <strong>Favicon</strong>. All changes take effect immediately.
+      </p>
+
+      <!-- ===== LOGO EDITOR ===== -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.05rem;margin-bottom:4px;">Site Logo</h2>
+        <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">
+          Shown in the navigation bar and footer on every page. Recommended: PNG or SVG, transparent background, at least 300 Ã— 80 px.
+        </p>
+        <div class="brand-asset-panel">
+          <div class="brand-asset-preview" id="logo-preview-box">
+            <img id="logo-preview-img" src="/assets/logo-BEb4-giD.png" alt="Current logo">
+          </div>
+          <div class="brand-asset-info">
+            <p>Current file: <strong>logo.png</strong></p>
+            <label class="asset-upload-label">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Choose new logo
+              <input type="file" id="logo-file-input" accept=".png,.jpg,.jpeg,.svg,image/png,image/jpeg,image/svg+xml">
+            </label>
+            <div class="asset-file-name" id="logo-file-name">No file chosen</div>
+            <button class="btn btn-primary asset-save-btn" id="logo-save-btn" disabled>Save logo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FAVICON EDITOR ===== -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.05rem;margin-bottom:4px;">Favicon</h2>
+        <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">
+          The small icon shown in browser tabs and bookmarks. Recommended: PNG, square, 32 Ã— 32 or 192 Ã— 192 px.
+        </p>
+        <div class="brand-asset-panel">
+          <div class="brand-asset-preview favicon-preview" id="favicon-preview-box">
+            <img id="favicon-preview-img" src="/assets/favicon-BUkpCu_D.png" alt="Current favicon">
+          </div>
+          <div class="brand-asset-info">
+            <p>Current file: <strong>favicon.png</strong></p>
+            <label class="asset-upload-label">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Choose new favicon
+              <input type="file" id="favicon-file-input" accept=".png,.ico,image/png,image/x-icon">
+            </label>
+            <div class="asset-file-name" id="favicon-file-name">No file chosen</div>
+            <button class="btn btn-primary asset-save-btn" id="favicon-save-btn" disabled>Save favicon</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ABOUT PAGE EDITOR ===== -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.05rem;margin-bottom:4px;">About Page</h2>
+        <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">Edits the researcher profile shown on <a href="about.html" target="_blank">about.html</a>.</p>
+        <form id="admin-about-form" novalidate>
+          <div class="form-row-two">
+            <div class="field">
+              <label for="sc-researcher-name">Researcher name</label>
+              <input type="text" id="sc-researcher-name" placeholder="e.g. Dr. A. Kenton">
+            </div>
+            <div class="field">
+              <label for="sc-initials">Initials (avatar)</label>
+              <input type="text" id="sc-initials" placeholder="e.g. AK" maxlength="3">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sc-department">Department / Affiliation</label>
+            <input type="text" id="sc-department" placeholder="e.g. Department of Accounting, University of Lagos">
+          </div>
+          <div class="field">
+            <label for="sc-bio1">Bio â€” paragraph 1</label>
+            <textarea id="sc-bio1" rows="3" placeholder="First paragraphâ€¦"></textarea>
+          </div>
+          <div class="field">
+            <label for="sc-bio2">Bio â€” paragraph 2</label>
+            <textarea id="sc-bio2" rows="3" placeholder="Second paragraphâ€¦"></textarea>
+          </div>
+          <div class="field">
+            <label for="sc-credentials">Credentials <span class="field-opt">(one per line)</span></label>
+            <textarea id="sc-credentials" rows="5" placeholder="PhD in Accounting, University of Lagos&#10;Associate Professor, Department of Accounting"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save About page</button>
+        </form>
+      </div>
+
+      <!-- ===== CONTACT INFO EDITOR ===== -->
+      <div class="admin-panel">
+        <h2 style="font-size:1.05rem;margin-bottom:4px;">Contact Information</h2>
+        <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">Updates the email and phone shown on <a href="contact.html" target="_blank">contact.html</a>.</p>
+        <form id="admin-contact-form" novalidate>
+          <div class="field">
+            <label for="sc-email">Contact email</label>
+            <input type="email" id="sc-email" placeholder="e.g. contact@researchhub.ng">
+          </div>
+          <div class="field">
+            <label for="sc-phone">Contact phone</label>
+            <input type="tel" id="sc-phone" placeholder="e.g. +234 801 234 5678">
+          </div>
+          <button type="submit" class="btn btn-primary">Save contact info</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Logo & Favicon inline handlers (client-side preview + localStorage storage) -->
+<script>
+(function() {
+  var LOGO_KEY    = 'rh_logo_dataurl';
+  var FAVICON_KEY = 'rh_favicon_dataurl';
+
+  /* ---- Apply stored assets on load ---- */
+  function applyStoredLogo() {
+    var data = localStorage.getItem(LOGO_KEY);
+    if (!data) return;
+    // Replace every logo img on this page
+    document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
+      img.src = data;
+    });
+    var prev = document.getElementById('logo-preview-img');
+    if (prev) prev.src = data;
+  }
+  function applyStoredFavicon() {
+    var data = localStorage.getItem(FAVICON_KEY);
+    if (!data) return;
+    document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
+      el.href = data;
+    });
+    var prev = document.getElementById('favicon-preview-img');
+    if (prev) prev.src = data;
+  }
+  applyStoredLogo();
+  applyStoredFavicon();
+
+  /* ---- Logo picker ---- */
+  var logoInput   = document.getElementById('logo-file-input');
+  var logoPreview = document.getElementById('logo-preview-img');
+  var logoName    = document.getElementById('logo-file-name');
+  var logoSaveBtn = document.getElementById('logo-save-btn');
+  var _logoDataUrl = null;
+
+  logoInput.addEventListener('change', function() {
+    var file = logoInput.files[0];
+    if (!file) return;
+    logoName.textContent = file.name;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      _logoDataUrl = e.target.result;
+      logoPreview.src = _logoDataUrl;
+      logoSaveBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  logoSaveBtn.addEventListener('click', function() {
+    if (!_logoDataUrl) return;
+    localStorage.setItem(LOGO_KEY, _logoDataUrl);
+    // Apply to all logo images on the page immediately
+    document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
+      img.src = _logoDataUrl;
+    });
+    showToast('Logo updated. Changes are live across all pages.');
+    logoSaveBtn.disabled = true;
+    logoInput.value = '';
+    logoName.textContent = 'No file chosen';
+  });
+
+  /* ---- Favicon picker ---- */
+  var faviconInput   = document.getElementById('favicon-file-input');
+  var faviconPreview = document.getElementById('favicon-preview-img');
+  var faviconName    = document.getElementById('favicon-file-name');
+  var faviconSaveBtn = document.getElementById('favicon-save-btn');
+  var _faviconDataUrl = null;
+
+  faviconInput.addEventListener('change', function() {
+    var file = faviconInput.files[0];
+    if (!file) return;
+    faviconName.textContent = file.name;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      _faviconDataUrl = e.target.result;
+      faviconPreview.src = _faviconDataUrl;
+      faviconSaveBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  faviconSaveBtn.addEventListener('click', function() {
+    if (!_faviconDataUrl) return;
+    localStorage.setItem(FAVICON_KEY, _faviconDataUrl);
+    // Update favicon link tags immediately
+    document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
+      el.href = _faviconDataUrl;
+    });
+    showToast('Favicon updated. Changes are live across all pages.');
+    faviconSaveBtn.disabled = true;
+    faviconInput.value = '';
+    faviconName.textContent = 'No file chosen';
+  });
+})();
+</script>
+</body>
+</html>

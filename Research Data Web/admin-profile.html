@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="theme-color" content="#16292B">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — Research Hub Admin</title>
+<meta name="description" content="View and update your admin account information and change your password.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body-bg">
+
+<div class="admin-shell">
+  <div class="admin-mobile-bar">
+    <a href="admin-dashboard.html" class="brand" style="font-size:1.1rem;color:var(--paper);">Research Hub</a>
+    <button class="admin-mobile-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+  </div>
+  <div class="admin-sidebar-overlay" id="admin-overlay"></div>
+
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <a href="admin-dashboard.html" class="brand admin-brand-link">Research Hub</a>
+      <span class="admin-badge-pill">Admin</span>
+    </div>
+    <nav class="admin-sidebar-nav">
+      <!-- rebuilt dynamically by script.js initAdminSidebar() -->
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebar-user-info"></div>
+      <button id="admin-logout-btn" class="admin-logout-btn">&#x1F6AA; Log out</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-header">
+      <p class="eyebrow" style="margin-bottom:4px;">Account</p>
+      <h1>My Profile</h1>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- Account info display -->
+      <div class="admin-panel" style="margin-bottom:24px; max-width:720px;">
+        <h2 style="font-size:1.05rem;margin-bottom:16px;">Account Overview</h2>
+        <table class="detail-meta-table">
+          <tr><td>Name</td><td id="ap-display-name">&#8212;</td></tr>
+          <tr><td>Email</td><td id="ap-display-email">&#8212;</td></tr>
+          <tr><td>Role</td><td id="ap-display-role">&#8212;</td></tr>
+          <tr><td>Joined</td><td id="ap-display-joined">&#8212;</td></tr>
+        </table>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:24px; max-width:720px;">
+
+        <!-- Personal info form -->
+        <div class="admin-panel">
+          <h2 style="font-size:1.05rem;margin-bottom:4px;">Personal Information</h2>
+          <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">Update your display name. Email cannot be changed in this version.</p>
+          <form id="admin-profile-form" novalidate>
+            <div class="form-row-two">
+              <div class="field">
+                <label for="ap-firstname">First name</label>
+                <input type="text" id="ap-firstname" placeholder="First name">
+              </div>
+              <div class="field">
+                <label for="ap-lastname">Last name</label>
+                <input type="text" id="ap-lastname" placeholder="Last name">
+              </div>
+            </div>
+            <div class="field">
+              <label for="ap-othernames">Other names <span class="field-opt">(optional)</span></label>
+              <input type="text" id="ap-othernames" placeholder="Middle name(s)">
+            </div>
+            <div class="field">
+              <label for="ap-email">Email address</label>
+              <input type="email" id="ap-email" placeholder="admin@Research Hubng" readonly style="opacity:0.6;cursor:not-allowed;">
+              <div class="hint">Email cannot be changed in this version.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save profile</button>
+          </form>
+        </div>
+
+        <!-- Password change -->
+        <div class="admin-panel">
+          <h2 style="font-size:1.05rem;margin-bottom:4px;">Change Password</h2>
+          <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">Use a strong password at least 8 characters long.</p>
+          <form id="admin-pw-form" novalidate>
+            <div class="field">
+              <label for="ap-current-pw">Current password</label>
+              <input type="password" id="ap-current-pw" placeholder="Your current password" autocomplete="current-password">
+            </div>
+            <div class="field">
+              <label for="ap-new-pw">New password</label>
+              <input type="password" id="ap-new-pw" placeholder="Min. 8 characters" autocomplete="new-password">
+            </div>
+            <div class="field">
+              <label for="ap-confirm-pw">Confirm new password</label>
+              <input type="password" id="ap-confirm-pw" placeholder="Repeat new password" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn btn-primary">Update password</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/script.js"></script>
+<script type="module" src="/animations.js"></script>
+</body>
+</html>
