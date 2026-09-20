@@ -1,5 +1,5 @@
 import { supabase } from './supabase.js';
-// Research Hub â€” Research Data Marketplace
+// Research Hub — Research Data Marketplace
 // All data stored in localStorage (demo/template — NOT for production)
 
 var USERS_KEY    = 'ledger_users';
@@ -137,28 +137,9 @@ async function loadStorefrontPapers() {
         <h3 style="margin-bottom: 10px;">${escHtml(data.title || 'Untitled')}</h3>
         <p style="font-weight: bold; color: var(--primary); margin-bottom: 15px;">₦${Number(data.price || 0).toLocaleString()}</p>
         <div class="payment-action-container" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-          <button class="btn btn-primary simulate-payment-btn" style="width: 100%; text-align: center;">Simulate Payment (Test)</button>
-          <a href="${data.file_url}" target="_blank" class="btn btn-secondary download-link" style="display: none; text-align: center;">Download PDF</a>
+          <a href="dataset.html?id=${data.id}" class="btn btn-primary" style="width: 100%; text-align: center;">See more details</a>
         </div>
       `;
-
-      const simulateBtn = div.querySelector('.simulate-payment-btn');
-      const downloadLink = div.querySelector('.download-link');
-
-      simulateBtn.addEventListener('click', () => {
-        // Mock processing state
-        simulateBtn.textContent = 'Processing...';
-        simulateBtn.disabled = true;
-        simulateBtn.style.opacity = '0.7';
-        simulateBtn.style.cursor = 'not-allowed';
-
-        // TODO: Replace this setTimeout with an actual payment gateway call (e.g. Paystack / Flutterwave)
-        // and add the payment verification step here before revealing the download link.
-        setTimeout(() => {
-          simulateBtn.style.display = 'none';
-          downloadLink.style.display = 'block';
-        }, 1500); // Simulate 1.5s payment delay
-      });
 
       grid.appendChild(div);
     });
@@ -331,7 +312,6 @@ function seedSiteContent() {
    TOAST
    ============================================================ */
 function showToast(message) {
-  window.showToast = showToast; // Expose globally for inline scripts
   var toast = document.getElementById('toast');
   if (!toast) {
     toast = document.createElement('div');
@@ -341,11 +321,12 @@ function showToast(message) {
   toast.textContent = message;
   toast.classList.add('show');
   clearTimeout(toast._timer);
-  toast._timer = setTimeout(function(){ toast.classList.remove('show'); }, 4200);
+  toast._timer = setTimeout(function(){ toast.classList.remove('show');  }, 3000);
 }
+window.showToast = showToast;
 
 /* ============================================================
-   PUBLIC NAV Ã¢â‚¬â€ MOBILE TOGGLE
+   PUBLIC NAV Ã¢â‚¬â€  MOBILE TOGGLE
    ============================================================ */
 function initNavToggle() {
   var toggle = document.querySelector('.nav-toggle');
@@ -388,7 +369,7 @@ function initNavAuth() {
     if (user) {
       if (loginAnchor) loginAnchor.parentElement.style.display = 'none';
 
-      let roleName = user.isAdmin ? 'Admin' : 'User';
+      let roleName = user.isAdmin ? 'Admin' : 'Researcher';
       let profileUrl = user.isAdmin ? 'admin-profile.html' : 'dashboard.html';
 
       var widget = document.createElement('div');
@@ -664,10 +645,17 @@ function initAuthForms() {
       submitBtn.textContent = 'Creating account...';
       submitBtn.disabled = true;
 
+      var fn = val('reg-firstname');
+      var ln = val('reg-lastname');
+      var on = val('reg-othernames');
+
       try {
         const { data, error } = await supabase.auth.signUp({
           email: email,
           password: pw,
+          options: {
+            data: { first_name: fn, last_name: ln, other_names: on }
+          }
         });
         if (error) throw error;
         
@@ -676,7 +664,10 @@ function initAuthForms() {
           await supabase.from('users').insert([{
             id: data.user.id,
             email: email,
-            role: 'user'
+            role: 'user',
+            first_name: fn,
+            last_name: ln,
+            other_names: on
           }]);
         }
 
@@ -711,19 +702,11 @@ function initAboutPage() {
   var c = getSiteContent();
   if (!c || !c.about) return;
   var a = c.about;
-  setText('about-initials', a.initials);
-  setText('about-name',     a.researcherName);
-  setText('about-dept',     a.department);
-  setText('about-bio1',     a.bio1);
-  setText('about-bio2',     a.bio2);
-  var credList = document.getElementById('about-credentials');
-  if (credList && a.credentials) {
-    credList.innerHTML = '';
-    a.credentials.forEach(function(cred) {
-      var li = document.createElement('li'); li.textContent = cred;
-      credList.appendChild(li);
-    });
-  }
+  setText('about-title',     a.title);
+  setText('about-subtitle',  a.subtitle);
+  setText('about-mission',   a.mission);
+  setText('about-challenge', a.challenge);
+  setText('about-solution',  a.solution);
 }
 
 /* ============================================================
@@ -792,6 +775,7 @@ function getAllDatasets() {
    ============================================================ */
 async function initBrowsePage() {
   var list = document.getElementById('dataset-list'); if (!list) return;
+  list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--ink-soft);">Loading datasets...</div>';
 
   const { data: papers, error } = await supabase
     .from('papers')
@@ -817,11 +801,12 @@ async function initBrowsePage() {
     a.innerHTML =
       '<div>' +
         '<h3 class="data-title">' + escHtml(ds.title) + '</h3>' +
-        '<p class="data-desc">View details</p>' +
-        '<div class="data-tags">' + tagHtml + '</div>' +
+        '<div class="data-tags" style="margin:10px 0;">' + tagHtml + '</div>' +
       '</div>' +
-      '<div class="data-stats"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="vertical-align:middle;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>0</div>' +
-      '<div class="data-price">₦' + Number(ds.price).toLocaleString() + '</div>';
+      '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">' +
+        '<div class="data-price" style="font-size:1.2rem; font-weight:700; color:var(--teal-dark);">₦' + Number(ds.price).toLocaleString() + '</div>' +
+        '<div class="btn btn-primary btn-small" style="pointer-events:none;">View & Purchase</div>' +
+      '</div>';
     list.appendChild(a);
   });
 }
@@ -858,90 +843,180 @@ function initSearchFilter() {
 }
 
 /* ============================================================
-   DATASET DETAIL PAGE Ã¢â‚¬â€ load from URL ?id= param
+   DATASET DETAIL PAGE — load from URL ?id= param
    ============================================================ */
-function initDatasetPage() {
+async function initDatasetPage() {
   if (currentPage() !== 'dataset.html') return;
 
   var dsid = getUrlParam('id');
-  var all  = getAllDatasets();
-  var ds   = null;
-
-  if (dsid) {
-    ds = all.find(function(d){ return d.id === dsid; });
-  }
-  if (!ds && all.length > 0) {
-    ds = all[0]; // fallback to first available
-  }
-  if (!ds) {
-    // No datasets at all Ã¢â‚¬â€ show a message
-    var main = document.getElementById('main');
-    if (main) main.innerHTML = '<section><div class="wrap"><p style="padding:40px 0;color:var(--ink-soft);">No dataset found. <a href="browse.html">Browse all datasets &rarr;</a></p></div></section>';
+  if (!dsid) {
+    showNoDataset();
     return;
   }
 
+  const { data: ds, error } = await supabase
+    .from('papers')
+    .select('*')
+    .eq('id', dsid)
+    .single();
+
+  if (error || !ds) {
+    showNoDataset();
+    return;
+  }
+
+  function showNoDataset() {
+    var main = document.getElementById('main');
+    if (main) main.innerHTML = '<section><div class="wrap"><p style="padding:40px 0;color:var(--ink-soft);">No dataset found. <a href="browse.html">Browse all datasets &rarr;</a></p></div></section>';
+  }
+
   // Update page title
-  document.title = escHtml(ds.title) + ' Ã¢â‚¬â€ Research Hub';
+  document.title = escHtml(ds.title) + ' — Research Hub';
 
   // Breadcrumb
-  setText('ds-category-crumb', ds.category || 'Research');
+  setText('ds-category-crumb', 'Paper');
 
   // Main content
   setText('ds-title',       ds.title);
-  setText('ds-description', ds.description || '');
-  setText('ds-category',    ds.category || 'Ã¢â‚¬â€');
+  setText('ds-description', ds.description || 'No description provided.');
+  setText('ds-category',    'Paper');
   setText('ds-price',       '₦' + Number(ds.price).toLocaleString());
-  setText('ds-uploader',    ds.uploadedBy || 'Ã¢â‚¬â€');
-  setText('ds-download-count', ds.downloads || 0);
+  setText('ds-uploader',    'Admin'); // since only admin uploads currently
+  setText('ds-download-count', 0); // Not implemented yet
 
   // Date
-  if (ds.createdAt) {
-    setText('ds-date', new Date(ds.createdAt).toLocaleDateString('en-NG', {year:'numeric',month:'long',day:'numeric'}));
+  if (ds.created_at) {
+    setText('ds-date', new Date(ds.created_at).toLocaleDateString('en-NG', {year:'numeric',month:'long',day:'numeric'}));
   }
 
   // Tags
   var tagsEl = document.getElementById('ds-tags');
   if (tagsEl) {
-    var tags = ds.tags || (ds.category ? [ds.category] : []);
-    tagsEl.innerHTML = tags.map(function(t){ return '<span class="tag">' + escHtml(t) + '</span>'; }).join('');
+    tagsEl.innerHTML = '<span class="tag">Paper</span>';
   }
 
-  // Buy button Ã¢â‚¬â€ wire up data attributes
+  // Buy button — wire up data attributes
   var buyBtn = document.getElementById('ds-buy-btn');
   if (buyBtn) {
     buyBtn.setAttribute('data-buy',  ds.title);
     buyBtn.setAttribute('data-dsid', ds.id);
+    
+    var fullDownloadLink = document.getElementById('ds-full-download-btn');
+    
+    buyBtn.addEventListener('click', function() {
+      // Mock processing state
+      buyBtn.textContent = 'Processing...';
+      buyBtn.disabled = true;
+      buyBtn.style.opacity = '0.7';
+      buyBtn.style.cursor = 'not-allowed';
+
+      // Simulate payment delay
+      setTimeout(function() {
+        buyBtn.style.display = 'none';
+        
+        if (fullDownloadLink) {
+          fullDownloadLink.href = ds.file_url;
+          fullDownloadLink.style.display = 'block';
+        }
+      }, 1500);
+    });
   }
 
   // Buy panel price display
   var priceEl = document.getElementById('ds-buy-price');
   if (priceEl) priceEl.textContent = '₦' + Number(ds.price).toLocaleString();
 
-  // File download link & preview
-  var fileLink = document.getElementById('ds-file-link');
-  var previewIframe = document.getElementById('ds-preview-iframe');
-  
-  if (fileLink) {
-    if (ds.fileData) {
-      fileLink.href = ds.fileData;
-      fileLink.download = ds.fileName || (ds.title + '.pdf');
-      fileLink.style.display = 'inline-block';
-      fileLink.textContent = 'Download full paper (' + (ds.fileName || 'file') + ')';
+  // PDF Preview logic
+  if (ds.file_url) {
+    const canvas = document.getElementById('pdf-preview-canvas');
+    const controls = document.getElementById('pdf-controls');
+    const heading = document.getElementById('pdf-preview-heading');
+    const pageNumEl = document.getElementById('pdf-page-num');
+    const pageCountEl = document.getElementById('pdf-page-count');
+    const prevBtn = document.getElementById('pdf-prev');
+    const nextBtn = document.getElementById('pdf-next');
+
+    if (canvas && typeof pdfjsLib !== 'undefined') {
+      canvas.style.display = 'block';
+      controls.style.display = 'flex';
+      if (heading) heading.style.display = 'block';
       
-      // If it's a PDF, show a preview
-      if (previewIframe && ds.fileData.indexOf('data:application/pdf') === 0) {
-        previewIframe.src = ds.fileData;
-        previewIframe.style.display = 'block';
-      }
-    } else if (ds.fileName) {
-      fileLink.textContent = ds.fileName + ' (file stored externally)';
-      fileLink.removeAttribute('href');
-      fileLink.style.color = 'var(--ink-soft)';
-      fileLink.style.display = 'inline-block';
-    } else {
-      fileLink.style.display = 'none';
+      let pdfDoc = null;
+      let startPage = ds.preview_start || 1;
+      let endPage = ds.preview_end || 5;
+      let pageNum = startPage;
+      let pageRendering = false;
+      let pageNumPending = null;
+      const ctx = canvas.getContext('2d');
+
+      const renderPage = (num) => {
+        pageRendering = true;
+        pdfDoc.getPage(num).then((page) => {
+          const viewport = page.getViewport({ scale: 1.5 });
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport
+          };
+          
+          const renderTask = page.render(renderContext);
+          renderTask.promise.then(() => {
+            pageRendering = false;
+            if (pageNumPending !== null) {
+              renderPage(pageNumPending);
+              pageNumPending = null;
+            }
+          });
+        });
+
+        pageNumEl.textContent = (num - startPage + 1);
+      };
+
+      const queueRenderPage = (num) => {
+        if (pageRendering) {
+          pageNumPending = num;
+        } else {
+          renderPage(num);
+        }
+      };
+
+      const onPrevPage = () => {
+        if (pageNum <= startPage) return;
+        pageNum--;
+        queueRenderPage(pageNum);
+      };
+
+      const onNextPage = () => {
+        if (pageNum >= endPage || pageNum >= pdfDoc.numPages) return;
+        pageNum++;
+        queueRenderPage(pageNum);
+      };
+
+      prevBtn.addEventListener('click', onPrevPage);
+      nextBtn.addEventListener('click', onNextPage);
+
+      pdfjsLib.getDocument(ds.file_url).promise.then((pdf) => {
+        pdfDoc = pdf;
+        // Adjust endPage if the document has fewer pages
+        endPage = Math.min(endPage, pdf.numPages);
+        
+        // Handle invalid startPage gracefully
+        if (startPage > pdf.numPages) startPage = 1;
+
+        pageCountEl.textContent = (endPage - startPage + 1);
+        pageNum = startPage;
+        renderPage(pageNum);
+      }).catch((err) => {
+        console.error('Error loading PDF preview: ', err);
+        canvas.style.display = 'none';
+        controls.style.display = 'none';
+        if (heading) heading.style.display = 'none';
+      });
     }
   }
+
 }
 
 /* ============================================================
@@ -949,18 +1024,24 @@ function initDatasetPage() {
    ============================================================ */
 function initUserDashboard() {
   if (!document.getElementById('dashboard-main')) return;
-  getSessionUser().then((user) => {
+  getSessionUser().then(async (user) => {
     if (!user) return;
+    
+    // Fetch from public.users table to get the true registered name and role
+    const { data: dbUser } = await supabase.from('users').select('*').eq('id', user.id).single();
 
-    const firstName = user.user_metadata?.first_name || '';
-    const lastName = user.user_metadata?.last_name || '';
-    const otherNames = user.user_metadata?.other_names || '';
+    const firstName = dbUser?.first_name || user.user_metadata?.first_name || '';
+    const lastName = dbUser?.last_name || user.user_metadata?.last_name || '';
+    const otherNames = dbUser?.other_names || user.user_metadata?.other_names || '';
     const createdAt = user.created_at || new Date().toISOString();
 
     var fullName = (firstName || lastName) ? (firstName + ' ' + lastName + (otherNames?' '+otherNames:'')) : 'Standard User';
     setText('dash-name',   fullName);
     setText('dash-email',  user.email);
-    setText('dash-role',   user.isAdmin ? 'Administrator' : 'Researcher');
+    
+    // Fallback: If role is empty or explicitly 'user', show 'Researcher'
+    const displayRole = (user.role === 'admin' || dbUser?.role === 'admin') ? 'Administrator' : 'Researcher';
+    setText('dash-role',   displayRole);
     setText('dash-joined', new Date(createdAt).toLocaleDateString('en-NG',{year:'numeric',month:'long',day:'numeric'}));
 
     var adminLink = document.getElementById('dash-admin-link');
@@ -1005,41 +1086,63 @@ function initUserDashboard() {
         tbody.appendChild(tr);
       });
     }
-    }
+  }
   });
 }
 
-/* ============================================================
-   ADMIN Ã¢â‚¬â€ DASHBOARD STATS
-   ============================================================ */
-function initAdminDashboard() {
+async function initAdminDashboard() {
   if (!document.getElementById('admin-dash-stats')) return;
-  var datasets  = getDatasets();
-  var users     = getUsers();
-  var payments  = getPayments();
-  var totalDL   = datasets.reduce(function(s,d){ return s+(d.downloads||0); }, 0);
-  var totalRev  = payments.reduce(function(s,p){ return s+Number(p.amount); }, 0);
-  setText('stat-papers',    String(datasets.length));
-  setText('stat-downloads', String(totalDL));
-  setText('stat-revenue',   '₦'+totalRev.toLocaleString());
-  setText('stat-users',     String(users.length));
 
-  // Recent activity
+  setText('stat-papers',    '...');
+  setText('stat-downloads', '...');
+  setText('stat-revenue',   '...');
+  setText('stat-users',     '...');
+
   var actEl = document.getElementById('admin-recent-activity');
-  if (!actEl) return;
-  var allEvents = [];
-  getUsers().slice(-3).forEach(function(u){ allEvents.push({type:'user',label:'New user registered: '+escHtml(u.firstName+' '+u.lastName),date:u.createdAt}); });
-  getTickets().slice(-3).forEach(function(t){ allEvents.push({type:'ticket',label:'Support ticket '+escHtml(t.ref)+': '+escHtml(t.subject),date:t.createdAt}); });
-  getPayments().slice(-3).forEach(function(p){ allEvents.push({type:'payment',label:'Payment received Ã¢â‚¬â€ '+escHtml(p.datasetTitle)+' ₦'+Number(p.amount).toLocaleString(),date:p.createdAt}); });
-  allEvents.sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
-  actEl.innerHTML = '';
-  if (allEvents.length===0) { actEl.innerHTML='<p style="color:var(--ink-soft);padding:16px 0;">No recent activity yet.</p>'; return; }
-  allEvents.slice(0,8).forEach(function(ev) {
-    var div = document.createElement('div');
-    div.className = 'activity-item activity-'+ev.type;
-    div.innerHTML = '<span class="activity-label">'+ev.label+'</span><span class="activity-date">'+new Date(ev.date).toLocaleDateString('en-NG')+'</span>';
-    actEl.appendChild(div);
-  });
+  if (actEl) actEl.innerHTML = '<p style="color:var(--ink-soft);padding:16px 0;">Loading activity...</p>';
+
+  try {
+    const [ { data: papersData }, { data: usersData } ] = await Promise.all([
+      supabase.from('papers').select('*'),
+      supabase.from('users').select('*')
+    ]);
+
+    var datasets = papersData || [];
+    var users = usersData || [];
+    var payments  = getPayments();
+    var tickets   = getTickets();
+
+    var totalDL   = datasets.reduce(function(s,d){ return s+(d.downloads||0); }, 0);
+    var totalRev  = payments.reduce(function(s,p){ return s+Number(p.amount); }, 0);
+    
+    setText('stat-papers',    String(datasets.length));
+    setText('stat-downloads', String(totalDL));
+    setText('stat-revenue',   '₦'+totalRev.toLocaleString());
+    setText('stat-users',     String(users.length));
+
+    if (!actEl) return;
+    var allEvents = [];
+    users.slice(-3).forEach(function(u){ 
+      let name = u.email || 'User';
+      if (u.firstName && u.lastName) name = u.firstName + ' ' + u.lastName;
+      allEvents.push({type:'user',label:'New user registered: '+escHtml(name),date:u.created_at || new Date().toISOString()}); 
+    });
+    tickets.slice(-3).forEach(function(t){ allEvents.push({type:'ticket',label:'Support ticket '+escHtml(t.ref)+': '+escHtml(t.subject),date:t.createdAt}); });
+    payments.slice(-3).forEach(function(p){ allEvents.push({type:'payment',label:'Payment received — '+escHtml(p.datasetTitle)+' ₦'+Number(p.amount).toLocaleString(),date:p.createdAt}); });
+    
+    allEvents.sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
+    actEl.innerHTML = '';
+    if (allEvents.length===0) { actEl.innerHTML='<p style="color:var(--ink-soft);padding:16px 0;">No recent activity yet.</p>'; return; }
+    allEvents.slice(0,8).forEach(function(ev) {
+      var div = document.createElement('div');
+      div.className = 'activity-item activity-'+ev.type;
+      div.innerHTML = '<span class="activity-label">'+ev.label+'</span><span class="activity-date">'+new Date(ev.date).toLocaleDateString('en-NG')+'</span>';
+      actEl.appendChild(div);
+    });
+  } catch(e) {
+    console.error(e);
+    if (actEl) actEl.innerHTML = '<p style="color:var(--ink-soft);padding:16px 0;">Error loading dashboard.</p>';
+  }
 }
 
 /* ============================================================
@@ -1074,7 +1177,7 @@ async function renderAdminUsers() {
       '<td>—</td>'+ // Name not in public.users schema currently
       '<td>'+escHtml(u.email)+'</td>'+
       '<td>—</td>'+ // CreatedAt not in public.users schema currently
-      '<td><span class="role-badge '+(isAdmin?'role-admin':'role-user')+'">'+(isAdmin?'Admin':'User')+'</span></td>'+
+      '<td><span class="role-badge '+(isAdmin?'role-admin':'role-user')+'">'+(isAdmin?'Admin':'Researcher')+'</span></td>'+
       '<td>'+(prot?'<span style="font-size:0.8rem;color:var(--ink-soft);">Protected</span>':
         '<button class="btn btn-small '+(isAdmin?'btn-secondary':'btn-primary')+' toggle-admin-btn" data-uid="'+escHtml(u.id)+'" data-isadmin="'+isAdmin+'">'+(isAdmin?'Revoke Admin':'Make Admin')+'</button>')+'</td>';
     tbody.appendChild(tr);
@@ -1086,9 +1189,11 @@ async function renderAdminUsers() {
       var isCurrentlyAdmin = btn.getAttribute('data-isadmin') === 'true';
       var newRole = isCurrentlyAdmin ? 'user' : 'admin';
       
-      const { error } = await supabase.from('users').update({ role: newRole }).eq('id', uid);
+      const { data, error } = await supabase.from('users').update({ role: newRole }).eq('id', uid).select();
       if (error) {
         showToast('Error updating role: ' + error.message);
+      } else if (!data || data.length === 0) {
+        showToast('Error: Role update blocked (Likely RLS policy on users table).');
       } else {
         showToast('Role updated to ' + newRole + '.');
         renderAdminUsers();
@@ -1125,7 +1230,10 @@ async function renderAdminPapers() {
       '<td class="dl-stat">⬇ 0</td>'+ // downloads not in new schema
       '<td>Admin</td>'+
       '<td>'+new Date(ds.created_at).toLocaleDateString('en-NG')+'</td>'+
-      '<td><button class="btn btn-small btn-secondary delete-ds-btn" data-dsid="'+escHtml(ds.id)+'">Delete</button></td>';
+      '<td>'+
+        '<button class="btn btn-small btn-primary edit-ds-btn" style="margin-right:8px;" data-ds=\''+JSON.stringify(ds).replace(/'/g, "&apos;")+'\'>Edit</button>'+
+        '<button class="btn btn-small btn-secondary delete-ds-btn" data-dsid="'+escHtml(ds.id)+'">Delete</button>'+
+      '</td>';
     tbody.appendChild(tr);
   });
   
@@ -1143,83 +1251,157 @@ async function renderAdminPapers() {
       }
     });
   });
+
+  // Edit logic
+  const modal = document.getElementById('admin-edit-modal');
+  if (modal) {
+    const closeBtn = document.getElementById('admin-edit-close');
+    const form = document.getElementById('admin-edit-form');
+    
+    // Close modal
+    const closeModal = () => { modal.style.display = 'none'; };
+    closeBtn.onclick = closeModal;
+    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+    // Open modal
+    tbody.querySelectorAll('.edit-ds-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const ds = JSON.parse(btn.getAttribute('data-ds').replace(/&apos;/g, "'"));
+        setVal('edit-paper-id', ds.id);
+        setVal('edit-paper-title', ds.title);
+        setVal('edit-paper-price', ds.price);
+        setVal('edit-preview-start', ds.preview_start || 1);
+        setVal('edit-preview-end', ds.preview_end || 5);
+        document.getElementById('edit-paper-file').value = ''; // clear file input
+        modal.style.display = 'flex';
+      });
+    });
+
+    // Handle form submit
+    form.onsubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-paper-id').value;
+      const title = document.getElementById('edit-paper-title').value;
+      const price = Number(document.getElementById('edit-paper-price').value);
+      const pStart = Number(document.getElementById('edit-preview-start').value);
+      const pEnd = Number(document.getElementById('edit-preview-end').value);
+      const fileInput = document.getElementById('edit-paper-file');
+      const file = fileInput.files[0];
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      if (!title || price === undefined || !pStart || !pEnd) {
+        showToast('Please fill in all required fields.');
+        return;
+      }
+      if (price > 5000) { showToast('Price cannot exceed ₦5,000.'); return; }
+      if (pStart > pEnd) { showToast('Preview start page must be less than or equal to end page.'); return; }
+
+      submitBtn.textContent = 'Saving...';
+      submitBtn.disabled = true;
+
+      try {
+        let updateData = {
+          title, price, preview_start: pStart, preview_end: pEnd
+        };
+
+        if (file) {
+          if (!file.name.toLowerCase().endsWith('.pdf')) {
+            showToast('Only PDF files are accepted.');
+            submitBtn.textContent = 'Save Changes';
+            submitBtn.disabled = false;
+            return;
+          }
+          const fileName = Date.now() + '_' + file.name;
+          const { error: uploadError } = await supabase.storage.from('papers_bucket').upload(fileName, file);
+          if (uploadError) throw uploadError;
+          const { data: publicUrlData } = supabase.storage.from('papers_bucket').getPublicUrl(fileName);
+          updateData.file_url = publicUrlData.publicUrl;
+        }
+
+        const { error: updateError } = await supabase.from('papers').update(updateData).eq('id', id);
+        if (updateError) throw updateError;
+
+        showToast('Dataset updated successfully!');
+        closeModal();
+        renderAdminPapers();
+      } catch (err) {
+        console.error(err);
+        showToast('Error: ' + err.message);
+      } finally {
+        submitBtn.textContent = 'Save Changes';
+        submitBtn.disabled = false;
+      }
+    };
+  }
 }
 
 /* ============================================================
    ADMIN Ã¢â‚¬â€ UPLOAD (PDF / DOCX only) Ã¢â‚¬â€ stores file as base64
    ============================================================ */
 function initAdminUpload() {
-  var form      = document.getElementById('admin-upload-form'); if (!form) return;
-  var fileInput = document.getElementById('a-file');
+  var form      = document.getElementById('admin-upload-form');
+  var btn       = document.getElementById('admin-submit-btn');
+  if (!form) return;
 
-  // Restrict file picker to PDF / DOCX at the browser level
-  if (fileInput) {
-    fileInput.setAttribute('accept', '.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-  }
-
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
-    var title    = val('a-title');
-    var desc     = val('a-description');
-    var category = val('a-category');
-    var price    = Number(val('a-price'));
-    var user     = getCurrentUser();
+    var title    = document.getElementById('admin-paper-title').value;
+    var price    = Number(document.getElementById('admin-paper-price').value);
+    var pStart   = Number(document.getElementById('admin-preview-start').value);
+    var pEnd     = Number(document.getElementById('admin-preview-end').value);
+    var fileInput= document.getElementById('admin-paper-file');
+    var file     = fileInput.files[0];
 
-    if (!title || !category || !price) { showToast('Please fill in all required fields.'); return; }
+    if (!title || price === undefined || !file || !pStart || !pEnd) { 
+      showToast('Please fill in all required fields.'); 
+      return; 
+    }
     if (price > 5000) { showToast('Price cannot exceed ₦5,000.'); return; }
+    if (pStart > pEnd) { showToast('Preview start page must be less than or equal to end page.'); return; }
 
-    var file = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
-
-    // File type validation
-    if (file) {
-      var name = file.name.toLowerCase();
-      var ok   = name.endsWith('.pdf') || name.endsWith('.docx');
-      if (!ok) {
-        showToast('Only PDF and DOCX files are accepted.');
-        return;
-      }
+    var name = file.name.toLowerCase();
+    if (!name.endsWith('.pdf')) {
+      showToast('Only PDF files are accepted for preview.');
+      return;
     }
 
-    // Tags from category
-    var tags = category ? [category] : [];
+    btn.textContent = 'Uploading...';
+    btn.disabled = true;
 
-    if (file) {
-      // Read file as base64 DataURL so it can be served from localStorage
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        var dataUrl = ev.target.result;
-        saveNewDataset(title, desc, category, tags, price, user, file.name, file.type, dataUrl);
-      };
-      reader.onerror = function() {
-        showToast('Could not read file. Please try again.');
-      };
-      reader.readAsDataURL(file);
-    } else {
-      saveNewDataset(title, desc, category, tags, price, user, '', '', null);
+    try {
+      const fileName = Date.now() + '_' + file.name;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('papers_bucket')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from('papers_bucket')
+        .getPublicUrl(fileName);
+        
+      const downloadURL = publicUrlData.publicUrl;
+
+      const { error: insertError } = await supabase.from('papers').insert([{
+        title: title,
+        price: price,
+        file_url: downloadURL,
+        preview_start: pStart,
+        preview_end: pEnd
+      }]);
+      
+      if (insertError) throw insertError;
+
+      showToast('Paper uploaded successfully!');
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      showToast('Error uploading paper: ' + error.message);
+    } finally {
+      btn.textContent = 'Upload to Storefront';
+      btn.disabled = false;
     }
   });
-
-  function saveNewDataset(title, desc, category, tags, price, user, fileName, fileType, fileData) {
-    var datasets = getDatasets();
-    var record = {
-      id:          genId('ds'),
-      title:       title,
-      description: desc,
-      category:    category,
-      tags:        tags,
-      price:       price,
-      downloads:   0,
-      uploadedBy:  user ? user.email : 'admin',
-      fileName:    fileName,
-      fileType:    fileType,
-      createdAt:   new Date().toISOString()
-    };
-    if (fileData) record.fileData = fileData;
-    datasets.push(record);
-    saveDatasets(datasets);
-    form.reset();
-    showToast('"' + title + '" added to the archive successfully.');
-  }
 }
 
 /* ============================================================
@@ -1397,12 +1579,11 @@ function initAdminContent() {
   var c = getSiteContent();
   if (c) {
     if (c.about) {
-      setVal('sc-researcher-name', c.about.researcherName || '');
-      setVal('sc-department',      c.about.department     || '');
-      setVal('sc-initials',        c.about.initials       || '');
-      setVal('sc-bio1',            c.about.bio1           || '');
-      setVal('sc-bio2',            c.about.bio2           || '');
-      setVal('sc-credentials',     (c.about.credentials   || []).join('\n'));
+      setVal('sc-about-title',     c.about.title     || 'About Research Hub');
+      setVal('sc-about-subtitle',  c.about.subtitle  || 'Advancing the global scientific community through secure, verified data exchange and intellectual property licensing.');
+      setVal('sc-about-mission',   c.about.mission   || 'Research Hub was established with a singular objective: to democratize access to high-quality, empirical research data while ensuring primary researchers and authors retain control and receive appropriate compensation for their intellectual property.');
+      setVal('sc-about-challenge', c.about.challenge || 'For decades, critical raw datasets and specialized research papers have remained siloed within specific academic departments or lost entirely post-publication. Students, data scientists, and independent researchers often struggle to find verified, secondary data necessary to replicate findings, conduct meta-analyses, or train computational models. Concurrently, original authors lack a streamlined, secure mechanism to license their datasets to the broader academic community.');
+      setVal('sc-about-solution',  c.about.solution  || 'By leveraging robust cloud infrastructure and modern web technologies, Research Hub provides a secure digital marketplace. We meticulously vet the integrity of uploaded papers and datasets, offering institutional-grade Row Level Security to protect data at rest and in transit. Researchers can confidently browse, evaluate, and securely acquire the exact data they need to drive their thesis or specialized studies forward.');
     }
     if (c.contact) {
       setVal('sc-email', c.contact.email || '');
@@ -1415,12 +1596,11 @@ function initAdminContent() {
       e.preventDefault();
       var c = getSiteContent() || { about:{}, contact:{} };
       if (!c.about) c.about = {};
-      c.about.researcherName = val('sc-researcher-name');
-      c.about.department     = val('sc-department');
-      c.about.initials       = val('sc-initials');
-      c.about.bio1           = val('sc-bio1');
-      c.about.bio2           = val('sc-bio2');
-      c.about.credentials    = val('sc-credentials').split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+      c.about.title     = val('sc-about-title');
+      c.about.subtitle  = val('sc-about-subtitle');
+      c.about.mission   = val('sc-about-mission');
+      c.about.challenge = val('sc-about-challenge');
+      c.about.solution  = val('sc-about-solution');
       saveSiteContent(c);
       showToast('About page saved. Changes are now live.');
     });
@@ -1448,11 +1628,14 @@ function initProfileEditForms() {
   getSessionUser().then(async (user) => {
     if (!user) return;
 
-    const firstName = user.user_metadata?.first_name || '';
-    const lastName = user.user_metadata?.last_name || '';
-    const otherNames = user.user_metadata?.other_names || '';
-    const createdAt = user.created_at || new Date().toISOString();
-    const role = user.role || 'user';
+    // Fetch from public.users table
+    const { data: dbUser } = await supabase.from('users').select('*').eq('id', user.id).single();
+    
+    const firstName = dbUser?.firstName || user.user_metadata?.first_name || '';
+    const lastName = dbUser?.lastName || user.user_metadata?.last_name || '';
+    const otherNames = dbUser?.otherNames || user.user_metadata?.other_names || '';
+    const createdAt = dbUser?.created_at || user.created_at || new Date().toISOString();
+    const role = dbUser?.role || user.role || 'user';
 
     // Pre-fill profile form
     setVal('up-firstname',  firstName);
@@ -1460,7 +1643,7 @@ function initProfileEditForms() {
     setVal('up-othernames', otherNames);
 
     // Populate dashboard display info
-    const fullName = (firstName || lastName) ? (firstName + ' ' + lastName) : 'Standard User';
+    const fullName = (firstName || lastName) ? (firstName + ' ' + lastName).trim() : 'Standard User';
     setText('dash-name',        fullName);
     setText('dash-name-detail', fullName);
     setText('dash-email-detail', user.email);
@@ -1474,18 +1657,31 @@ function initProfileEditForms() {
         var fn = val('up-firstname'); var ln = val('up-lastname'); var on = val('up-othernames');
         if (!fn || !ln) { showToast('First and last name are required.'); return; }
         
+        var submitBtn = infoForm.querySelector('button[type="submit"]');
+        var originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Saving...';
+        submitBtn.disabled = true;
+        
         const { error } = await supabase.auth.updateUser({
           data: { first_name: fn, last_name: ln, other_names: on }
         });
+        
+        const { error: dbError } = await supabase.from('users').update({
+          first_name: fn,
+          last_name: ln,
+          other_names: on
+        }).eq('id', user.id);
 
-        if (error) {
-          showToast('Error updating profile: ' + error.message);
+        if (error || dbError) {
+          showToast('Error updating profile: ' + (error ? error.message : dbError.message));
         } else {
           var full = fn + ' ' + ln + (on ? ' ' + on : '');
           setText('dash-name',        full);
           setText('dash-name-detail', full);
           showToast('Profile updated.');
         }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
       });
     }
 
@@ -1502,6 +1698,11 @@ function initProfileEditForms() {
         if (newPw.length < 8) { showToast('New password must be at least 8 characters.'); return; }
         if (newPw !== conPw)  { showToast('New passwords do not match.'); return; }
         
+        var submitBtn = pwForm.querySelector('button[type="submit"]');
+        var originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Updating...';
+        submitBtn.disabled = true;
+        
         const { error } = await supabase.auth.updateUser({ password: newPw });
         if (error) {
           showToast('Error updating password: ' + error.message);
@@ -1509,6 +1710,8 @@ function initProfileEditForms() {
           pwForm.reset();
           showToast('Password changed successfully.');
         }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
       });
     }
   });

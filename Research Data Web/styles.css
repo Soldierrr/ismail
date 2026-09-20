@@ -111,6 +111,24 @@ p { margin: 0 0 1em 0; max-width: 62ch; }
   font-size: 0.85rem;
 }
 
+.btn-login {
+  background: linear-gradient(135deg, var(--teal), var(--gold));
+  color: var(--white);
+  border: none;
+  background-size: 200% auto;
+  transition: background-position 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.btn-login:hover {
+  background-position: right center;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+.btn-login:focus-visible { 
+  outline: 3px solid var(--gold); 
+  outline-offset: 2px; 
+}
+
 .btn-block { display: block; width: 100%; text-align: center; }
 
 /* ---------- Header / Nav ---------- */

@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#16292B">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log in / Create Account — Research Hub</title>
+<title>Create Account — Research Hub</title>
 <meta name="description" content="Log in or create an account on Research Hub to browse, purchase and upload research datasets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -39,23 +39,50 @@
   <section>
     <div class="wrap" style="max-width: 560px;">
       <div class="form-panel" style="max-width: none; padding: 32px;">
-        <!-- ===== LOGIN PANEL ===== -->
-        <div id="login-panel">
-          <form data-auth-form="login" novalidate>
-            <div class="field">
-              <label for="login-email">Email address</label>
-              <input type="email" id="login-email" placeholder="e.g. you@example.com" required>
-              <div class="field-error">Email address is required.</div>
+        <!-- ===== REGISTER PANEL ===== -->
+        <div id="register-panel">
+          <form data-auth-form="register" novalidate>
+            <div class="form-row-two">
+              <div class="field">
+                <label for="reg-firstname">First name</label>
+                <input type="text" id="reg-firstname" placeholder="e.g. Chukwuemeka" required>
+                <div class="field-error">First name is required.</div>
+              </div>
+              <div class="field">
+                <label for="reg-lastname">Last name</label>
+                <input type="text" id="reg-lastname" placeholder="e.g. Obi" required>
+                <div class="field-error">Last name is required.</div>
+              </div>
             </div>
+
             <div class="field">
-              <label for="login-password">Password</label>
-              <input type="password" id="login-password" placeholder="Your password" required>
-              <div class="field-error">Password is required.</div>
+              <label for="reg-othernames">Other names <span class="field-opt">(optional)</span></label>
+              <input type="text" id="reg-othernames" placeholder="e.g. Nnamdi">
             </div>
-            <button type="submit" class="btn btn-login btn-block" style="padding: 12px; font-size: 1rem; font-weight: 600;">Log in</button>
+
+            <div class="field">
+              <label for="reg-email">Email address</label>
+              <input type="email" id="reg-email" placeholder="e.g. you@example.com" required>
+              <div class="field-error">Please enter a valid email address.</div>
+            </div>
+
+            <div class="field">
+              <label for="reg-password">Password</label>
+              <input type="password" id="reg-password" placeholder="At least 8 characters" required>
+              <div class="hint">Use at least 8 characters — mix letters, numbers and symbols.</div>
+              <div class="field-error">Password must be at least 8 characters.</div>
+            </div>
+
+            <div class="field">
+              <label for="reg-confirm-password">Confirm password</label>
+              <input type="password" id="reg-confirm-password" placeholder="Repeat your password" required>
+              <div class="field-error">Passwords do not match.</div>
+            </div>
+
+            <button type="submit" class="btn btn-login btn-block" style="padding: 12px; font-size: 1rem; font-weight: 600;">Create account</button>
           </form>
           <div style="text-align: center; margin-top: 20px;">
-            <p style="color: var(--ink-soft); font-size: 0.95rem;">Don't have an account? <a href="register.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create one</a></p>
+            <p style="color: var(--ink-soft); font-size: 0.95rem;">Already have an account? <a href="login.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">Log in</a></p>
           </div>
         </div>
       </div><!-- /form-panel -->

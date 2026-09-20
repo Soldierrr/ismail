@@ -60,6 +60,16 @@
         <form id="admin-upload-form" style="display: flex; flex-direction: column; gap: 15px;">
           <input type="text" id="admin-paper-title" placeholder="Paper Title" required style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
           <input type="number" id="admin-paper-price" placeholder="Price (Naira)" required style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+          <div style="display: flex; gap: 15px;">
+            <div style="flex: 1;">
+              <label for="admin-preview-start" style="font-size: 0.9rem; margin-bottom: 4px; display: block; color: var(--ink-soft);">Preview Start Page</label>
+              <input type="number" id="admin-preview-start" placeholder="e.g. 1" required min="1" value="1" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+            </div>
+            <div style="flex: 1;">
+              <label for="admin-preview-end" style="font-size: 0.9rem; margin-bottom: 4px; display: block; color: var(--ink-soft);">Preview End Page</label>
+              <input type="number" id="admin-preview-end" placeholder="e.g. 3" required min="1" value="3" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+            </div>
+          </div>
           <div style="border: 1px dashed #cbd5e1; padding: 20px; border-radius: 6px; text-align: center;">
             <label for="admin-paper-file" style="display:block; margin-bottom: 10px; font-weight: 500;">Select PDF File</label>
             <input type="file" id="admin-paper-file" accept="application/pdf" required style="font-family: inherit;">

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#16292B">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content â€” Research Hub Admin</title>
+<title>Content — Research Hub Admin</title>
 <meta name="description" content="Edit the public-facing About page, Contact information, Logo and Favicon for Research Hub">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -87,7 +87,7 @@
             <label class="asset-upload-label">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Choose new logo
-              <input type="file" id="logo-file-input" accept=".png,.jpg,.jpeg,.svg,image/png,image/jpeg,image/svg+xml">
+              <input type="file" id="logo-file-input" accept="image/*">
             </label>
             <div class="asset-file-name" id="logo-file-name">No file chosen</div>
             <button class="btn btn-primary asset-save-btn" id="logo-save-btn" disabled>Save logo</button>
@@ -110,7 +110,7 @@
             <label class="asset-upload-label">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Choose new favicon
-              <input type="file" id="favicon-file-input" accept=".png,.ico,image/png,image/x-icon">
+              <input type="file" id="favicon-file-input" accept="image/*">
             </label>
             <div class="asset-file-name" id="favicon-file-name">No file chosen</div>
             <button class="btn btn-primary asset-save-btn" id="favicon-save-btn" disabled>Save favicon</button>
@@ -123,33 +123,27 @@
         <h2 style="font-size:1.05rem;margin-bottom:4px;">About Page</h2>
         <p style="font-size:0.88rem;color:var(--ink-soft);margin-bottom:20px;">Edits the researcher profile shown on <a href="about.html" target="_blank">about.html</a>.</p>
         <form id="admin-about-form" novalidate>
-          <div class="form-row-two">
-            <div class="field">
-              <label for="sc-researcher-name">Researcher name</label>
-              <input type="text" id="sc-researcher-name" placeholder="e.g. Dr. A. Kenton">
-            </div>
-            <div class="field">
-              <label for="sc-initials">Initials (avatar)</label>
-              <input type="text" id="sc-initials" placeholder="e.g. AK" maxlength="3">
-            </div>
+          <div class="field">
+            <label for="sc-about-title">Page Title</label>
+            <input type="text" id="sc-about-title" placeholder="e.g. About Research Hub">
           </div>
           <div class="field">
-            <label for="sc-department">Department / Affiliation</label>
-            <input type="text" id="sc-department" placeholder="e.g. Department of Accounting, University of Lagos">
+            <label for="sc-about-subtitle">Subtitle / Hero Text</label>
+            <textarea id="sc-about-subtitle" rows="3" placeholder="Advancing the global scientific community..."></textarea>
           </div>
           <div class="field">
-            <label for="sc-bio1">Bio â€” paragraph 1</label>
-            <textarea id="sc-bio1" rows="3" placeholder="First paragraphâ€¦"></textarea>
+            <label for="sc-about-mission">Our Mission</label>
+            <textarea id="sc-about-mission" rows="4" placeholder="Mission statement..."></textarea>
           </div>
           <div class="field">
-            <label for="sc-bio2">Bio â€” paragraph 2</label>
-            <textarea id="sc-bio2" rows="3" placeholder="Second paragraphâ€¦"></textarea>
+            <label for="sc-about-challenge">The Challenge</label>
+            <textarea id="sc-about-challenge" rows="4" placeholder="Describe the challenge..."></textarea>
           </div>
           <div class="field">
-            <label for="sc-credentials">Credentials <span class="field-opt">(one per line)</span></label>
-            <textarea id="sc-credentials" rows="5" placeholder="PhD in Accounting, University of Lagos&#10;Associate Professor, Department of Accounting"></textarea>
+            <label for="sc-about-solution">Our Solution</label>
+            <textarea id="sc-about-solution" rows="4" placeholder="Describe the solution..."></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Save About page</button>
+          <button type="submit" class="btn btn-primary" style="margin-top:10px;">Save changes</button>
         </form>
       </div>
 
