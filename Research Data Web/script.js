@@ -206,11 +206,12 @@ async function getSessionUser() {
       cachedSessionUser = {
         ...session.user,
         role: userDoc?.role || 'user',
-        isAdmin: userDoc?.role === 'admin'
+        isAdmin: userDoc?.role === 'admin',
+        first_name: userDoc?.first_name || session.user.user_metadata?.first_name || ''
       };
       
     } catch (err) {
-      cachedSessionUser = { ...session.user, role: 'user', isAdmin: false };
+      cachedSessionUser = { ...session.user, role: 'user', isAdmin: false, first_name: session.user?.user_metadata?.first_name || '' };
     }
     resolve(cachedSessionUser);
   });
@@ -371,12 +372,13 @@ function initNavAuth() {
 
       let roleName = user.isAdmin ? 'Admin' : 'Researcher';
       let profileUrl = user.isAdmin ? 'admin-profile.html' : 'dashboard.html';
+      let displayName = user.first_name || user.user_metadata?.first_name || (user.email ? user.email.split('@')[0] : 'User');
 
       var widget = document.createElement('div');
       widget.className = 'nav-user-widget';
       widget.innerHTML =
         '<a href="' + profileUrl + '" class="nav-user-info" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:flex-start;">' +
-          '<div class="nav-user-name">' + escHtml(user.email) + '</div>' +
+          '<div class="nav-user-name">' + escHtml(displayName) + '</div>' +
           '<div class="nav-user-role">' + roleName + '</div>' +
         '</a>' +
         '<button id="nav-logout-btn" class="nav-logout-icon" title="Log out" aria-label="Log out">' + LOGOUT_SVG + '</button>';
@@ -485,13 +487,14 @@ function initAdminSidebar() {
   }
 
   // Sidebar user info
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session && session.user) {
+  getSessionUser().then((user) => {
+    if (user) {
       var infoEl = document.getElementById('sidebar-user-info');
       if (infoEl) {
+        let displayName = user.first_name || (user.email ? user.email.split('@')[0] : 'Admin');
         infoEl.innerHTML =
-          '<div class="sidebar-user-name">Admin</div>' +
-          '<div class="sidebar-user-email">' + escHtml(session.user.email) + '</div>';
+          '<div class="sidebar-user-name">' + escHtml(displayName) + '</div>' +
+          '<div class="sidebar-user-email">Admin</div>';
       }
     }
   });
@@ -1631,9 +1634,9 @@ function initProfileEditForms() {
     // Fetch from public.users table
     const { data: dbUser } = await supabase.from('users').select('*').eq('id', user.id).single();
     
-    const firstName = dbUser?.firstName || user.user_metadata?.first_name || '';
-    const lastName = dbUser?.lastName || user.user_metadata?.last_name || '';
-    const otherNames = dbUser?.otherNames || user.user_metadata?.other_names || '';
+    const firstName = dbUser?.first_name || user.user_metadata?.first_name || '';
+    const lastName = dbUser?.last_name || user.user_metadata?.last_name || '';
+    const otherNames = dbUser?.other_names || user.user_metadata?.other_names || '';
     const createdAt = dbUser?.created_at || user.created_at || new Date().toISOString();
     const role = dbUser?.role || user.role || 'user';
 
@@ -1643,7 +1646,7 @@ function initProfileEditForms() {
     setVal('up-othernames', otherNames);
 
     // Populate dashboard display info
-    const fullName = (firstName || lastName) ? (firstName + ' ' + lastName).trim() : 'Standard User';
+    const fullName = (firstName || lastName || otherNames) ? (firstName + ' ' + lastName + (otherNames ? ' ' + otherNames : '')).trim() : 'Standard User';
     setText('dash-name',        fullName);
     setText('dash-name-detail', fullName);
     setText('dash-email-detail', user.email);
@@ -1679,6 +1682,11 @@ function initProfileEditForms() {
           setText('dash-name',        full);
           setText('dash-name-detail', full);
           showToast('Profile updated.');
+          setVal('up-firstname', '');
+          setVal('up-lastname', '');
+          setVal('up-othernames', '');
+          var overviewBtn = document.querySelector('.dash-tab-btn[data-dtab="overview"]');
+          if (overviewBtn) overviewBtn.click();
         }
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
