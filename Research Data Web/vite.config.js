@@ -21,6 +21,7 @@ export default defineConfig({
         dashboard: resolve(__dirname, 'dashboard.html'),
         dataset: resolve(__dirname, 'dataset.html'),
         login: resolve(__dirname, 'login.html'),
+        register: resolve(__dirname, 'register.html'),
         upload: resolve(__dirname, 'upload.html')
       }
     }
