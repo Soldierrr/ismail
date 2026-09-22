@@ -171,34 +171,36 @@
 <script type="module" src="/script.js"></script>
 <script type="module" src="/animations.js"></script>
 
-<!-- Logo & Favicon inline handlers (client-side preview + localStorage storage) -->
-<script>
-(function() {
-  var LOGO_KEY    = 'rh_logo_dataurl';
-  var FAVICON_KEY = 'rh_favicon_dataurl';
+<!-- Logo & Favicon inline handlers -->
+<script type="module">
+import { supabase } from '/supabase.js';
 
+(async function() {
   /* ---- Apply stored assets on load ---- */
-  function applyStoredLogo() {
-    var data = localStorage.getItem(LOGO_KEY);
-    if (!data) return;
-    // Replace every logo img on this page
-    document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
-      img.src = data;
-    });
-    var prev = document.getElementById('logo-preview-img');
-    if (prev) prev.src = data;
+  async function applyStoredAssets() {
+    try {
+      const { data: settings } = await supabase.from('site_settings').select('*').eq('id', 1).single();
+      if (settings) {
+        if (settings.logo_url) {
+          document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
+            img.src = settings.logo_url;
+          });
+          var prevL = document.getElementById('logo-preview-img');
+          if (prevL) prevL.src = settings.logo_url;
+        }
+        if (settings.favicon_url) {
+          document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
+            el.href = settings.favicon_url;
+          });
+          var prevF = document.getElementById('favicon-preview-img');
+          if (prevF) prevF.src = settings.favicon_url;
+        }
+      }
+    } catch(err) {
+      console.warn("Could not load assets", err);
+    }
   }
-  function applyStoredFavicon() {
-    var data = localStorage.getItem(FAVICON_KEY);
-    if (!data) return;
-    document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
-      el.href = data;
-    });
-    var prev = document.getElementById('favicon-preview-img');
-    if (prev) prev.src = data;
-  }
-  applyStoredLogo();
-  applyStoredFavicon();
+  applyStoredAssets();
 
   /* ---- Logo picker ---- */
   var logoInput   = document.getElementById('logo-file-input');
@@ -220,17 +222,23 @@
     reader.readAsDataURL(file);
   });
 
-  logoSaveBtn.addEventListener('click', function() {
+  logoSaveBtn.addEventListener('click', async function() {
     if (!_logoDataUrl) return;
-    localStorage.setItem(LOGO_KEY, _logoDataUrl);
-    // Apply to all logo images on the page immediately
-    document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
-      img.src = _logoDataUrl;
-    });
-    showToast('Logo updated. Changes are live across all pages.');
     logoSaveBtn.disabled = true;
-    logoInput.value = '';
-    logoName.textContent = 'No file chosen';
+    logoSaveBtn.textContent = 'Saving...';
+    try {
+      const { error } = await supabase.from('site_settings').upsert({ id: 1, logo_url: _logoDataUrl });
+      if (error) throw error;
+      document.querySelectorAll('img[alt="Research Hub"]').forEach(function(img) {
+        img.src = _logoDataUrl;
+      });
+      window.showToast('Logo updated. Changes are live across all pages.');
+      logoInput.value = '';
+      logoName.textContent = 'No file chosen';
+    } catch(err) {
+      window.showToast('Error updating logo.');
+    }
+    logoSaveBtn.textContent = 'Save logo';
   });
 
   /* ---- Favicon picker ---- */
@@ -253,17 +261,23 @@
     reader.readAsDataURL(file);
   });
 
-  faviconSaveBtn.addEventListener('click', function() {
+  faviconSaveBtn.addEventListener('click', async function() {
     if (!_faviconDataUrl) return;
-    localStorage.setItem(FAVICON_KEY, _faviconDataUrl);
-    // Update favicon link tags immediately
-    document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
-      el.href = _faviconDataUrl;
-    });
-    showToast('Favicon updated. Changes are live across all pages.');
     faviconSaveBtn.disabled = true;
-    faviconInput.value = '';
-    faviconName.textContent = 'No file chosen';
+    faviconSaveBtn.textContent = 'Saving...';
+    try {
+      const { error } = await supabase.from('site_settings').upsert({ id: 1, favicon_url: _faviconDataUrl });
+      if (error) throw error;
+      document.querySelectorAll('link[rel*="icon"]').forEach(function(el) {
+        el.href = _faviconDataUrl;
+      });
+      window.showToast('Favicon updated. Changes are live across all pages.');
+      faviconInput.value = '';
+      faviconName.textContent = 'No file chosen';
+    } catch(err) {
+      window.showToast('Error updating favicon.');
+    }
+    faviconSaveBtn.textContent = 'Save favicon';
   });
 })();
 </script>
